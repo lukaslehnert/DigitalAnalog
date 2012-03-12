@@ -1,5 +1,5 @@
 CC=/usr/bin/avr-gcc
-CFLAGS=-g -Os -Wall -mcall-prologues -mmcu=attiny24
+CFLAGS=-g -Os -Wall -mcall-prologues -mmcu=attiny24a
 OBJ2HEX=/usr/bin/avr-objcopy
 PROG=/usr/bin/avrdude
 MCU=attiny24
@@ -9,7 +9,7 @@ objects = watch.o
 
 $(TARGET) : $(TARGET).hex
 	
-	
+$(TARGET).hex : $(TARGET).c	
 
 %.obj : %.o
 	$(CC) $(CFLAGS) $< -o $@
