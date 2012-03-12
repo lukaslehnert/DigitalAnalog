@@ -11,7 +11,7 @@ void delayms(uint16_t millis) {
 }
 
 int main(void) {
-  DDRB |= 1<<PB0; /* set PB0 to output */
+  DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
   while(1) {
     PORTB &= ~(1<<PB0); /* LED on */
     delayms(100);
