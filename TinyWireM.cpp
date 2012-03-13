@@ -13,12 +13,12 @@
   PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 */
 
-extern "C" {
+//extern "C" {
   //#include "USI_TWI_Master.h"
   //#include <USI_TWI_Master.h>
   //#include <USI_TWI_Master\USI_TWI_Master.h>
   //#include <USI_TWI_Master/USI_TWI_Master.h>
-}
+//}
 
 #include "USI_TWI_Master.h"
 #include "TinyWireM.h"

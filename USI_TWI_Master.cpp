@@ -38,7 +38,7 @@ union  USI_TWI_state
     unsigned char addressMode         : 1;
     unsigned char masterWriteDataMode : 1;
 	unsigned char memReadMode		  : 1;
-    unsigned char unused              : 5;
+ //   unsigned char unused              : 5;
   }; 
 }   USI_TWI_state;
 

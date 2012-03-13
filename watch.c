@@ -3,7 +3,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include "TinyWireM.h"
-#include "WString.h"
 
 void delayms(uint16_t millis) {
     //uint16_t loop;
@@ -24,7 +23,7 @@ int main(void) {
     //
     
     USI_TWI wire;
-    String strung; 
+    uint8_t arr[16]; 
 
     wire.begin();        // join i2c bus (address optional for master)
 
@@ -32,10 +31,13 @@ int main(void) {
     {
         wire.requestFrom(2, 6);    // request 6 bytes from slave device #2
 
+        uint8_t i = 0;
+        uint8_t c = 0;
         while(wire.available())    // slave may send less than requested
         {
-            char c = wire.read(); // receive a byte as character
-            strung += c;
+            c = wire.read(); // receive a byte as character
+            arr[i] = c;
+            i++;
         }
 
         return 0;
