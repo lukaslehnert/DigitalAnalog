@@ -26,8 +26,7 @@
 *                     success of the transmission.
 *
 ****************************************************************************/
-#include <inavr.h>
-#include <ioavr.h>
+#include <avr/io.h>
 #include "USI_TWI_Master.h"
 
 unsigned char USI_TWI_Master_Transfer( unsigned char );
@@ -83,7 +82,7 @@ unsigned char USI_TWI_Get_State_Info( void )
  Success or error code is returned. Error codes are defined in 
  USI_TWI_Master.h
 ---------------------------------------------------------------*/
-__x unsigned char USI_TWI_Start_Transceiver_With_Data( unsigned char *msg, unsigned char msgSize)
+unsigned char USI_TWI_Start_Transceiver_With_Data( unsigned char *msg, unsigned char msgSize)
 {
   unsigned char tempUSISR_8bit = (1<<USISIF)|(1<<USIOIF)|(1<<USIPF)|(1<<USIDC)|      // Prepare register value to: Clear flags, and
                                  (0x0<<USICNT0);                                     // set USI to shift 8 bits i.e. count 16 clock edges.

@@ -23,8 +23,7 @@
 *                     and PORTD to the switches.
 *
 ****************************************************************************/
-#include <inavr.h>
-#include <ioavr.h>
+#include <avr/io.h>
 #include "USI_TWI_Master.h"
 
 #define SLAVE_ADDR  0x10
@@ -42,19 +41,28 @@
 #define REQUEST_DATA          0x02
 #define READ_DATA_FROM_BUFFER 0x03
 
+#define PD0 0
+#define PD1 1
+#define PD2 2
+#define PD3 3
+#define PD4 4
+#define PD5 5
+#define PD6 6
+#define PD7 7
+
 unsigned char TWI_Act_On_Failure_In_Last_Transmission ( unsigned char TWIerrorMsg )
 {
                     // A failure has occurred, use TWIerrorMsg to determine the nature of the failure
                     // and take appropriate actions.
                     // Se header file for a list of possible failures messages.
 
-  __no_operation();
+//  __no_operation();
                      
   return TWIerrorMsg; 
 }
 
 
-void main( void )
+int main( void )
 {
   unsigned char messageBuf[MESSAGEBUF_SIZE];
   unsigned char TWI_targetSlaveAddress, temp, pressedButton, myCounter=0;
@@ -64,11 +72,11 @@ void main( void )
   PORTB = myCounter;
   
   //Switch port - connect portD to the STK500 switches
-  DDRD  = 0x00;
+  //DDRD  = 0x00;
 
   USI_TWI_Master_Initialise();
   
-  __enable_interrupt();
+//  __enable_interrupt();
   
   TWI_targetSlaveAddress   = 0x10;
 
@@ -81,10 +89,10 @@ void main( void )
   // This is a stk500 demo example. The buttons on PORTD are used to control different TWI operations.
   for(;;)
   {  
-    pressedButton = ~PIND;
+    pressedButton = 1;
     if (pressedButton)       // Check if any button is pressed
     {
-      do{temp = ~PIND;}      // Wait until key released
+      do{temp = ~0;}      // Wait until key released
       while (temp);
       
       temp = TRUE;  // I.e. Success. Used to trap failed operations.
@@ -152,8 +160,9 @@ void main( void )
       if (!temp)    // One of the operations failed.
       {             // Use TWI status information to detemine cause of failure and take appropriate actions. 
         TWI_Act_On_Failure_In_Last_Transmission( USI_TWI_Get_State_Info( ) );  
-        __no_operation(); // Put own code here.
+        //__no_operation(); // Put own code here.
       }
     }    
   }
+return 0;
 }
