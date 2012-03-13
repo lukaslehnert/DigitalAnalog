@@ -23,7 +23,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <compat/twi.h>
-#include "Arduino.h" // for digitalWrite
+//#include "Arduino.h" // for digitalWrite
 
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
@@ -33,8 +33,8 @@
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
-#include "pins_arduino.h"
 #include "twi.h"
+#include "pins_arduino.h"
 
 static volatile uint8_t twi_state;
 static uint8_t twi_slarw;
@@ -55,6 +55,31 @@ static volatile uint8_t twi_rxBufferIndex;
 
 static volatile uint8_t twi_error;
 
+
+void digitalWrite(uint8_t pin, uint8_t val)
+{
+        uint8_t bit = digitalPinToBitMask(pin);
+        uint8_t port = digitalPinToPort(pin);
+        volatile uint8_t *out;
+
+        if (port == NOT_A_PIN) return;
+
+        out = portOutputRegister(port);
+
+        uint8_t oldSREG = SREG;
+        cli();
+
+        if (val == LOW) {
+            *out &= ~bit;
+        } else {
+            *out |= bit;
+        }
+
+        SREG = oldSREG;
+}
+
+
+
 /* 
  * Function twi_init
  * Desc     readys twi pins and sets twi bitrate
@@ -71,9 +96,9 @@ void twi_init(void)
   digitalWrite(SCL, 1);
 
   // initialize twi prescaler and bit rate
-  cbi(TWSR, TWPS0);
-  cbi(TWSR, TWPS1);
-  TWBR = ((F_CPU / TWI_FREQ) - 16) / 2;
+  cbi(USISR, CLKPS0);
+  cbi(USISR, CLKPS1);
+  USIBR = ((F_CPU / TWI_FREQ) - 16) / 2;
 
   /* twi bit rate formula from atmega128 manual pg 204
   SCL Frequency = CPU Clock Frequency / (16 + (2 * TWBR))
@@ -81,7 +106,7 @@ void twi_init(void)
   It is 72 for a 16mhz Wiring board with 100kHz TWI */
 
   // enable twi module, acks, and twi interrupt
-  TWCR = _BV(TWEN) | _BV(TWIE) | _BV(TWEA);
+  USICR = _BV(TWEN) | _BV(TWIE) | _BV(TWEA);
 }
 
 /* 
@@ -199,7 +224,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
   twi_slarw |= address << 1;
   
   // send start condition
-  TWCR = _BV(TWEN) | _BV(TWIE) | _BV(TWEA) | _BV(TWINT) | _BV(TWSTA);
+  USICR = _BV(TWEN) | _BV(TWIE) | _BV(TWEA) | _BV(TWINT) | _BV(TWSTA);
 
   // wait for write operation to complete
   while(wait && (TWI_MTX == twi_state)){
@@ -317,7 +342,7 @@ void twi_stop(void)
 void twi_releaseBus(void)
 {
   // release bus
-  TWCR = _BV(TWEN) | _BV(TWIE) | _BV(TWEA) | _BV(TWINT);
+  USICR = _BV(TWEN) | _BV(TWIE) | _BV(TWEA) | _BV(TWINT);
 
   // update twi state
   twi_state = TWI_READY;
@@ -340,7 +365,7 @@ SIGNAL(TWI_vect)
       // if there is data to send, send it, otherwise stop 
       if(twi_masterBufferIndex < twi_masterBufferLength){
         // copy data to output register and ack
-        TWDR = twi_masterBuffer[twi_masterBufferIndex++];
+        USIDR = twi_masterBuffer[twi_masterBufferIndex++];
         twi_reply(1);
       }else{
         twi_stop();
