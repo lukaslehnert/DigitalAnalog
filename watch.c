@@ -1,8 +1,8 @@
 #define F_CPU 1000000UL
-#define __AVR_ATtiny24A__
+//#define __AVR_ATtiny24A__
 #include <avr/io.h>
 #include <util/delay.h>
-#include "wire.h"
+#include "TinyWireM.h"
 #include "WString.h"
 
 void delayms(uint16_t millis) {
@@ -23,7 +23,7 @@ int main(void) {
     // }
     //
     
-    TwoWire wire;
+    USI_TWI wire;
     String strung; 
 
     wire.begin();        // join i2c bus (address optional for master)

@@ -1,14 +1,15 @@
 CC=/usr/bin/avr-g++
-CFLAGS=-g -Os -Wall -mcall-prologues -mmcu=attiny24a -D__AVR_ATtiny24A__
+CFLAGS=-g -Os -Wall -mcall-prologues -mmcu=attiny24a #-D__AVR_ATtiny24A__
 OBJ2HEX=/usr/bin/avr-objcopy
 PROG=/usr/bin/avrdude
 INCLUDES=-I. -I/usr/avr/include
 
 MCU=attiny24
 TARGET=watch
-objects = wire.o twi.o 
+objects = TinyWireM.o WString.o USI_TWI_Master.o
 
-$(TARGET) : $(TARGET).hex
+
+#$(TARGET) : $(TARGET).hex
 
 $(TARGET).hex : $(TARGET).c $(objects)
 
