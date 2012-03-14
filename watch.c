@@ -2,7 +2,8 @@
 //#define __AVR_ATtiny24A__
 #include <avr/io.h>
 #include <util/delay.h>
-#include "TinyWireM.h"
+#include "USI_TWI_Master.h"
+#include "watch.h"
 
 void delayms(uint16_t millis) {
     //uint16_t loop;
@@ -11,6 +12,17 @@ void delayms(uint16_t millis) {
         millis--;
     }
 }
+
+#define SLAVE_ADDR  0x68
+#define MESSAGEBUF_SIZE       4
+
+#define TWI_CMD_MASTER_WRITE 0x10
+#define TWI_CMD_MASTER_READ  0x20
+
+#define SEND_DATA             0x01
+#define REQUEST_DATA          0x02
+#define READ_DATA_FROM_BUFFER 0x03
+
 
 int main(void) {
     //  DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
@@ -21,26 +33,77 @@ int main(void) {
     //   delayms(900);
     // }
     //
-    
-    USI_TWI wire;
-    uint8_t arr[16]; 
 
-    wire.begin();        // join i2c bus (address optional for master)
+    unsigned char messageBuf[MESSAGEBUF_SIZE];
+    unsigned char TWI_targetSlaveAddress, temp, pressedButton, myCounter=0;
 
-    while(true)
+    //LED feedback port - connect port B to the STK500 LEDS
+    DDRB  = 0xFF;
+    PORTB = myCounter;
+
+    USI_TWI_Master_Initialise();
+
+    TWI_targetSlaveAddress   = 0x10;
+    // Change this to the correct address, then find a better way to handle it (maybe a #define?)
+
+    // send data to device
+    messageBuf[0] = (SLAVE_ADDR<<TWI_ADR_BITS) | (FALSE<<TWI_READ_BIT); 
+    // The first byte must always consit of General Call code or the TWI slave address.
+    messageBuf[1] = TWI_CMD_MASTER_WRITE;     // The first byte is used for commands.
+    messageBuf[2] = myCounter;                // The second byte is used for the data.
+    temp = USI_TWI_Start_Transceiver_With_Data( messageBuf, 3 );
+
+
+    // receive data from device
+
+    messageBuf[0] = (SLAVE_ADDR<<TWI_ADR_BITS) | (FALSE<<TWI_READ_BIT);
+    // The first byte must always consit of General Call code or the TWI slave address.
+    messageBuf[1] = TWI_CMD_MASTER_READ;             // The first byte is used for commands.
+    temp = USI_TWI_Start_Transceiver_With_Data( messageBuf, 2 );
+
+    // One might need to delay before proceding to enable the slave to interpret the last message,
+    // and prepare the next request. Or as in this simple sample rerun the request until he responds. 
+    //
+    // Transmit request and get the received data from the transceiver buffer
+    messageBuf[0] = (SLAVE_ADDR<<TWI_ADR_BITS) | (TRUE<<TWI_READ_BIT); 
+    // The first byte must always consit of General Call code or the TWI slave address.
+    do
+        temp = USI_TWI_Start_Transceiver_With_Data( messageBuf, 2 );
+    while (USI_TWI_Get_State_Info() == USI_TWI_NO_ACK_ON_ADDRESS);
+
+    PORTB = messageBuf[1];        // Store data on PORTB.
+
+    if(temp)
     {
-        wire.requestFrom(2, 6);    // request 6 bytes from slave device #2
-
-        uint8_t i = 0;
-        uint8_t c = 0;
-        while(wire.available())    // slave may send less than requested
-        {
-            c = wire.read(); // receive a byte as character
-            arr[i] = c;
-            i++;
-        }
-
-        return 0;
+        LEDon(); 
+    }
+    else
+    {
+        LEDflashSlowly();
     }
 
 }
+
+
+
+
+void LEDon()
+{
+    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
+    PORTB &= ~(1<<PB0); /* LED on */
+    while(1) { ; }
+}
+
+
+void LEDflashSlowly()
+{
+    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
+    while(1) 
+    {
+        PORTB &= ~(1<<PB0); /* LED on */
+        delayms(100);
+        PORTB |= 1<<PB0; /* LED off */
+        delayms(900);
+    }
+}
+

@@ -28,6 +28,7 @@
 ****************************************************************************/
 #include <avr/io.h>
 #include "USI_TWI_Master.h"
+#include "pindefs.h"
 
 unsigned char USI_TWI_Master_Transfer( unsigned char );
 unsigned char USI_TWI_Master_Stop( void );
@@ -43,6 +44,12 @@ union  USI_TWI_state
   }; 
 }   USI_TWI_state;
 
+void __delay_cycles( unsigned char delay )
+{
+    while(delay)
+        --delay;
+
+}
 /*---------------------------------------------------------------
  USI TWI single master initialization function
 ---------------------------------------------------------------*/
@@ -84,26 +91,13 @@ unsigned char USI_TWI_Get_State_Info( void )
 ---------------------------------------------------------------*/
 unsigned char USI_TWI_Start_Transceiver_With_Data( unsigned char *msg, unsigned char msgSize)
 {
-  unsigned char tempUSISR_8bit = (1<<USISIF)|(1<<USIOIF)|(1<<USIPF)|(1<<USIDC)|      // Prepare register value to: Clear flags, and
-                                 (0x0<<USICNT0);                                     // set USI to shift 8 bits i.e. count 16 clock edges.
-  unsigned char tempUSISR_1bit = (1<<USISIF)|(1<<USIOIF)|(1<<USIPF)|(1<<USIDC)|      // Prepare register value to: Clear flags, and
-                                 (0xE<<USICNT0);                                     // set USI to shift 1 bit i.e. count 2 clock edges.
+  unsigned char tempUSISR_8bit = (1<<USISIF)|(1<<USIOIF)|(1<<USIPF)|(1<<USIDC)|(0x0<<USICNT0);
+  // Prepare register values: Clear flags and set USI to shift 8 bits i.e. count 16 clock edges.
+  unsigned char tempUSISR_1bit = (1<<USISIF)|(1<<USIOIF)|(1<<USIPF)|(1<<USIDC)|(0xE<<USICNT0);
+  // Prepare register values: Clear flags and set USI to shift 1 bit i.e. count 2 clock edges.
 
   USI_TWI_state.errorState = 0;
   USI_TWI_state.addressMode = TRUE;
-
-#ifdef PARAM_VERIFICATION
-  if(msg > (unsigned char*)RAMEND)                 // Test if address is outside SRAM space
-  {
-    USI_TWI_state.errorState = USI_TWI_DATA_OUT_OF_BOUND;
-    return (FALSE);
-  }
-  if(msgSize <= 1)                                 // Test if the transmission buffer is empty
-  {
-    USI_TWI_state.errorState = USI_TWI_NO_DATA;
-    return (FALSE);
-  }
-#endif
 
 #ifdef NOISE_TESTING                                // Test if any unexpected conditions have arrived prior to this execution.
   if( USISR & (1<<USISIF) )
@@ -131,11 +125,7 @@ unsigned char USI_TWI_Start_Transceiver_With_Data( unsigned char *msg, unsigned 
 /* Release SCL to ensure that (repeated) Start can be performed */
   PORT_USI |= (1<<PIN_USI_SCL);                     // Release SCL.
   while( !(PORT_USI & (1<<PIN_USI_SCL)) );          // Verify that SCL becomes high.
-#ifdef TWI_FAST_MODE
-  __delay_cycles( T4_TWI );                         // Delay for T4TWI if TWI_FAST_MODE
-#else
   __delay_cycles( T2_TWI );                         // Delay for T2TWI if TWI_STANDARD_MODE
-#endif
 
 /* Generate Start Condition */
   PORT_USI &= ~(1<<PIN_USI_SDA);                    // Force SDA LOW.
