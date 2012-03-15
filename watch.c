@@ -35,24 +35,25 @@ int main(void) {
     //
 
     unsigned char messageBuf[MESSAGEBUF_SIZE];
-    unsigned char TWI_targetSlaveAddress, temp, pressedButton, myCounter=0;
+    unsigned char temp;
 
-    //LED feedback port - connect port B to the STK500 LEDS
-    DDRB  = 0xFF;
-    PORTB = myCounter;
 
     USI_TWI_Master_Initialise();
 
-    TWI_targetSlaveAddress   = 0x10;
     // Change this to the correct address, then find a better way to handle it (maybe a #define?)
 
     // send data to device
     messageBuf[0] = (SLAVE_ADDR<<TWI_ADR_BITS) | (FALSE<<TWI_READ_BIT); 
     // The first byte must always consit of General Call code or the TWI slave address.
     messageBuf[1] = TWI_CMD_MASTER_WRITE;     // The first byte is used for commands.
-    messageBuf[2] = myCounter;                // The second byte is used for the data.
+    messageBuf[2] = 6;                // The second byte is used for the data.
     temp = USI_TWI_Start_Transceiver_With_Data( messageBuf, 3 );
+    // ************ temp is now 0x00.  What does that mean?  TODO: Find out!
 
+    if(temp)
+        LEDflashData(temp);
+    else
+        LEDflashSlowly();
 
     // receive data from device
 
@@ -68,19 +69,19 @@ int main(void) {
     messageBuf[0] = (SLAVE_ADDR<<TWI_ADR_BITS) | (TRUE<<TWI_READ_BIT); 
     // The first byte must always consit of General Call code or the TWI slave address.
     do
+    {
         temp = USI_TWI_Start_Transceiver_With_Data( messageBuf, 2 );
+    }
     while (USI_TWI_Get_State_Info() == USI_TWI_NO_ACK_ON_ADDRESS);
 
     PORTB = messageBuf[1];        // Store data on PORTB.
 
     if(temp)
-    {
-        LEDon(); 
-    }
+        LEDflashData(temp);
     else
-    {
         LEDflashSlowly();
-    }
+
+    return 0;
 
 }
 
@@ -107,3 +108,50 @@ void LEDflashSlowly()
     }
 }
 
+
+void LEDflashData(unsigned char data)
+{
+    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
+    while(1) 
+    {
+
+        PORTB &= ~(1<<PB0); /* LED on */
+        delayms(100);
+        PORTB |= 1<<PB0; /* LED off */
+        delayms(100);
+
+
+        PORTB &= ~(1<<PB0); /* LED on */
+        if((data & 0x08) == 0x08) 
+            delayms(500);
+        else
+            delayms(100);
+        PORTB |= 1<<PB0; /* LED off */
+
+
+        delayms(900);
+        if(data == 0x00)
+            for ( ;; ) {}
+        else
+            data <<= 1;
+    }
+}
+
+void LEDflashThrice()
+{
+    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
+    PORTB |= 1<<PB0; /* LED off */
+    delayms(100);
+    PORTB &= ~(1<<PB0); /* LED on */
+    delayms(100);
+    PORTB |= 1<<PB0; /* LED off */
+    delayms(100);
+    PORTB &= ~(1<<PB0); /* LED on */
+    delayms(100);
+    PORTB |= 1<<PB0; /* LED off */
+    delayms(100);
+    PORTB &= ~(1<<PB0); /* LED on */
+    delayms(100);
+    PORTB |= 1<<PB0; /* LED off */
+    delayms(1000);
+}
