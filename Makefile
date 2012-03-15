@@ -33,7 +33,7 @@ test1.o: test1.cc
 %.hex: %.obj
 	@echo building .hex
 	$(OBJ2HEX) -R .eeprom -O ihex $< $@
-	du -b *.o *.obj *.hex
+	avr-size *.o *.obj *.hex
 
 %.obj: $(OBJECT_FILES)
 	$(CC) $(CFLAGS) $(OBJECT_FILES) $(LDFLAGS) -o $@
