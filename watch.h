@@ -2,8 +2,8 @@
 
 
 void LEDon();
-void LEDflashSlowly();
+void LEDflashSignal();
 void LEDflashData(unsigned char);
-void LEDflashThrice();
+void LEDflashAlert();
 
 
