@@ -30,7 +30,7 @@ clean:
 test1.o: test1.cc
 
 i2cmaster.o: i2cmaster.S i2cmaster.h
-	$(CC) $(CFLAGS) -x assembler-with-cpp -Wa,-adhlns=i2cmaster.lst,-gstabs -c $< -o $@
+	$(CC) $(CFLAGS) -x assembler-with-cpp -Wa,-gstabs -c $< -o $@
 
 %.hex: %.obj
 	@echo building .hex
