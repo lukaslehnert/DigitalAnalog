@@ -3,13 +3,6 @@
 
 #define SLAVE_ADDR 0x6F
 
-int i = 0; //The new wire library needs to take an int when you are sending for the zero register
-
-const uint8_t daysInMonth [] PROGMEM = { 31,28,31,30,31,30,31,31,30,31,30,31 }; //has to be const or compiler compaints
-
-////////////////////////////////////////////////////////////////////////////////
-// DateTime implementation - ignores time zones and DST changes
-// NOTE: also ignores leap seconds, see http://en.wikipedia.org/wiki/Leap_second
 
 
 static uint8_t conv2d(const char* p) {
@@ -19,10 +12,10 @@ static uint8_t conv2d(const char* p) {
     return 10 * v + *++p - '0';
 }
 
-// A convenient constructor for using "the compiler's time":
+// A convenient accessor for using "the compiler's time":
 //   DateTime now (__DATE__, __TIME__);
-// NOTE: using PSTR would further reduce the RAM footprint
-uint8_t RTC_SetTime (const char* time) {
+uint8_t RTC_SetTime (const char* time) 
+{
     // sample input: time = "12:34:56"
     extern DateTime Time;
     uint8_t code = 0;
@@ -41,6 +34,18 @@ uint8_t RTC_SetTime (const char* time) {
 }
 
 
+// Push a DateTime back to the RTC device.
+uint8_t RTC_UpdateTime (DateTime time) 
+{
+
+}
+
+
+//Retrieve a DateTime from the RTC device
+DateTime RTC_GetTime ()
+{
+
+}
 
 
 static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }

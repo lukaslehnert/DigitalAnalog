@@ -12,3 +12,5 @@ typedef struct {
 } DateTime;
 
 uint8_t RTC_SetTime (const char*);
+uint8_t RTC_UpdateTime (DateTime);
+DateTime RTC_GetTime ();
