@@ -35,15 +35,21 @@
 
 
 #include <avr/io.h>
+#include "pindefs.h"
 
 
 
 ;***** Adapt these SCA and SCL port and pin definition to your target !!
 ;
-#define SDA     	4		// SDA Port D, Pin 4   
-#define SCL		5		// SCL Port D, Pin 5
-#define SDA_PORT        PORTD           // SDA Port D
-#define SCL_PORT        PORTD           // SCL Port D         
+;#define SDA     	4	
+;#define SCL		5	
+;#define SDA_PORT        PORTD  
+;#define SCL_PORT        PORTD 
+
+;#define SDA 6  ;PA6
+;#define SCL 4  ;PA4
+#define SDA_PORT        PORTA
+#define SCL_PORT        PORTA 
 
 ;******
 

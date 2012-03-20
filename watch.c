@@ -2,7 +2,7 @@
 //#define __AVR_ATtiny24A__
 #include <avr/io.h>
 #include <util/delay.h>
-#include "USI_TWI_Master.h"
+#include "i2cmaster.h"
 #include "watch.h"
 
 void delayms(uint16_t millis) {
@@ -34,56 +34,61 @@ int main(void) {
     // }
     //
 
-    unsigned char messageBuf[MESSAGEBUF_SIZE];
-    unsigned char temp;
+    unsigned char ret;
 
 
-    USI_TWI_Master_Initialise();
 
-    // Change this to the correct address, then find a better way to handle it (maybe a #define?)
+#define I2CADDR 0xDE
 
-    // send data to device
-    messageBuf[0] = (SLAVE_ADDR<<TWI_ADR_BITS) | (FALSE<<TWI_READ_BIT); 
-    // The first byte must always consit of General Call code or the TWI slave address.
-    messageBuf[1] = TWI_CMD_MASTER_WRITE;     // The first byte is used for commands.
-    messageBuf[2] = 6;                // The second byte is used for the data.
-    temp = USI_TWI_Start_Transceiver_With_Data( messageBuf, 3 );
-    // ************ temp is now 0x00.  What does that mean?  TODO: Find out!
-    // ************ "The slave did not acknowledge  the address"
+    i2c_init();
+    ret = i2c_start(I2CADDR+I2C_WRITE);       // set device address and write mode
 
-    if(!temp)
-        LEDflashData(USI_TWI_Get_State_Info());
+    if ( ret )
+    {
+        /* failed to issue start condition, possibly no device found */
+        i2c_stop();
+        LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid start condition.
+        LEDflashAlert();                        
+    }
     else
     {
-        LEDflashSignal();
-        LEDflashSignal();
+        /* issuing start condition ok, device accessible */
+        i2c_write(0x05);                       // write address = 5
+        i2c_write(0x75);                       // ret=0 -> Ok, ret=1 -> no ACK 
+        i2c_stop();                            // set stop conditon = release bus
+
+        /* write ok, read value back from eeprom address 0x05, wait until 
+         *            the device is no longer busy from the previous write operation */
+        i2c_start_wait(I2CADDR+I2C_WRITE);     // set device address and write mode
+        i2c_write(0x05);                        // write address = 5
+        i2c_rep_start(I2CADDR+I2C_READ);       // set device address and read mode
+        ret = i2c_readNak();                    // read one byte
+        i2c_stop();
+
+        PORTB = ~ret;                           // output byte on the LED's
+
+        /* write 0x70,0x71,072,073 to eeprom address 0x00..0x03 (Page Write),
+         *            wait until the device is no longer busy from the previous write operation */
+        i2c_start_wait(I2CADDR+I2C_WRITE);     // set device address and write mode
+        i2c_write(0x00);                        // write start address = 0
+        i2c_write(0x70);                        // write data to address 0
+        i2c_write(0x71);                        //    "    "   "    "    1
+        i2c_write(0x72);                        //    "    "   "    "    2
+        i2c_write(0x74);                        //    "    "   "    "    3
+        i2c_stop();                             // set stop conditon = release bus
+
+        /* write ok, read value back from eeprom address 0..3 (Sequencial Read),
+         *            wait until the device is no longer busy from the previous write operation */
+        i2c_start_wait(I2CADDR+I2C_WRITE);      // set device address and write mode
+        i2c_write(0x00);                         // write address = 0
+        i2c_rep_start(I2CADDR+I2C_READ);        // set device address and read mode
+        ret = i2c_readAck();                       // read one byte form address 0
+        ret = i2c_readAck();                       //  "    "    "    "     "    1
+        ret = i2c_readAck();                       //  "    "    "    "     "    2
+        ret = i2c_readNak();                       //  "    "    "    "     "    3
+        i2c_stop();                              // set stop condition = release bus
+
     }
-
-    // receive data from device
-
-    messageBuf[0] = (SLAVE_ADDR<<TWI_ADR_BITS) | (FALSE<<TWI_READ_BIT);
-    // The first byte must always consit of General Call code or the TWI slave address.
-    messageBuf[1] = TWI_CMD_MASTER_READ;             // The first byte is used for commands.
-    temp = USI_TWI_Start_Transceiver_With_Data( messageBuf, 2 );
-
-    // One might need to delay before proceding to enable the slave to interpret the last message,
-    // and prepare the next request. Or as in this simple sample rerun the request until he responds. 
-    //
-    // Transmit request and get the received data from the transceiver buffer
-    messageBuf[0] = (SLAVE_ADDR<<TWI_ADR_BITS) | (TRUE<<TWI_READ_BIT); 
-    // The first byte must always consit of General Call code or the TWI slave address.
-    do
-    {
-        temp = USI_TWI_Start_Transceiver_With_Data( messageBuf, 2 );
-    }
-    while (USI_TWI_Get_State_Info() == USI_TWI_NO_ACK_ON_ADDRESS);
-
-    PORTB = messageBuf[1];        // Store data on PORTB.
-
-    if(temp)
-        LEDflashData(temp);
-    else
-        LEDflashSignal();
 
     return 0;
 

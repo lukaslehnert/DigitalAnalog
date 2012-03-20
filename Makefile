@@ -9,7 +9,7 @@ OBJ2HEX=avr-objcopy
 LDFLAGS=-Wl,-gc-sections -Wl,-relax
 
 TARGET=watch
-OBJECT_FILES=watch.o USI_TWI_Master.o
+OBJECT_FILES=watch.o i2cmaster.o
 
 .SECONDARY : $(OBJECT_FILES)
 
@@ -29,6 +29,8 @@ clean:
 
 test1.o: test1.cc
 
+i2cmaster.o: i2cmaster.S i2cmaster.h
+	$(CC) $(CFLAGS) -x assembler-with-cpp -Wa,-adhlns=i2cmaster.lst,-gstabs -c $< -o $@
 
 %.hex: %.obj
 	@echo building .hex
