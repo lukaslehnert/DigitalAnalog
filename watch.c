@@ -3,15 +3,9 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include "i2cmaster.h"
-#include "watch.h"
+#include "RTC.h"
+#include "LEDstatus.h"
 
-void delayms(uint16_t millis) {
-    //uint16_t loop;
-    while ( millis ) {
-        _delay_ms(1);
-        millis--;
-    }
-}
 
 #define SLAVE_ADDR  0x6F
 #define MESSAGEBUF_SIZE       4
@@ -24,15 +18,12 @@ void delayms(uint16_t millis) {
 #define READ_DATA_FROM_BUFFER 0x03
 
 
+DateTime Time;
+
+
 int main(void) {
-    //  DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    // while(1) {
-    //   PORTB &= ~(1<<PB0); /* LED on */
-    //   delayms(100);
-    //   PORTB |= 1<<PB0; /* LED off */
-    //   delayms(900);
-    // }
-    //
+
+RTC_SetTime(__TIME__);
 
     unsigned char ret;
 
@@ -101,73 +92,3 @@ int main(void) {
 
 }
 
-
-
-
-void LEDon()
-{
-    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    PORTB &= ~(1<<PB0); /* LED on */
-}
-
-
-void LEDflashSignal()
-{
-    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    PORTB &= ~(1<<PB0); /* LED on */
-    delayms(500);
-    PORTB |= 1<<PB0; /* LED off */
-    delayms(500);
-}
-
-
-void LEDflashData(unsigned char data)
-{
-    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    unsigned char stored = data;
-    unsigned char i;
-    while(1)
-    {
-        LEDflashAlert();
-        for(i = 8 ; i>0 ; i--) 
-        {
-            PORTB &= ~(1<<PB0); /* LED on */
-            delayms(100);
-            PORTB |= 1<<PB0; /* LED off */
-            delayms(100);
-
-
-            PORTB &= ~(1<<PB0); /* LED on */
-            if((data & 0x80)) 
-                delayms(500);
-            else
-                delayms(100);
-            PORTB |= 1<<PB0; /* LED off */
-
-            data <<= 1;
-
-            delayms(900);
-        }
-        data = stored;
-    }
-}
-
-
-void LEDflashAlert()
-{
-    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    PORTB |= 1<<PB0; /* LED off */
-    delayms(100);
-    PORTB &= ~(1<<PB0); /* LED on */
-    delayms(100);
-    PORTB |= 1<<PB0; /* LED off */
-    delayms(100);
-    PORTB &= ~(1<<PB0); /* LED on */
-    delayms(100);
-    PORTB |= 1<<PB0; /* LED off */
-    delayms(100);
-    PORTB &= ~(1<<PB0); /* LED on */
-    delayms(100);
-    PORTB |= 1<<PB0; /* LED off */
-    delayms(1000);
-}

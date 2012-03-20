@@ -2,14 +2,14 @@ DEVICE = attiny24a
 F_CPU = 1000000
 
 CFLAGS = -g -Wall -mcall-prologues -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
-CPPFLAGS = -fno-exceptions -Wundef
+CPPFLAGS = $(CFLAGS) -fno-exceptions -Wundef
 
 CC=avr-gcc
 OBJ2HEX=avr-objcopy
 LDFLAGS=-Wl,-gc-sections -Wl,-relax
 
 TARGET=watch
-OBJECT_FILES=watch.o i2cmaster.o
+OBJECT_FILES=watch.o i2cmaster.o LEDstatus.o RTC.o
 
 .SECONDARY : $(OBJECT_FILES)
 
