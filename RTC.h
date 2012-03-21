@@ -5,12 +5,19 @@
 #include <util/delay.h>
 #include "i2cmaster.h"
 
+#define I2CADDR 0xDE
+
+
 typedef struct {
-//        DateTime DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour , uint8_t min , uint8_t sec );
-        uint8_t hour, minute, second;
+        uint8_t second;
+        uint8_t minute;
+        uint8_t hour;
 
 } DateTime;
 
 uint8_t RTC_SetTime (const char*);
 uint8_t RTC_UpdateTime (DateTime);
 DateTime RTC_GetTime ();
+
+static uint8_t bcd2bin (uint8_t);
+static uint8_t bin2bcd (uint8_t);
