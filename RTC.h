@@ -19,5 +19,4 @@ uint8_t RTC_SetTime (const char*);
 uint8_t RTC_UpdateTime (DateTime);
 DateTime RTC_GetTime ();
 
-static uint8_t bcd2bin (uint8_t);
-static uint8_t bin2bcd (uint8_t);
+

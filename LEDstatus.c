@@ -34,7 +34,6 @@ void LEDflashSignal()
 void LEDflashData(unsigned char data)
 {
     DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    unsigned char stored = data;
     unsigned char i;
     LEDflashAlert();
     for(i = 8 ; i>0 ; i--) 

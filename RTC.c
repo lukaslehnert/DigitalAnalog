@@ -8,12 +8,16 @@
 
 
 
-static uint8_t conv2d(const char* p) {
+static uint8_t conv2d(const char* p)
+{
     uint8_t v = 0;
     if ('0' <= *p && *p <= '9')
         v = *p - '0';
     return 10 * v + *++p - '0';
 }
+
+static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }
+static uint8_t bin2bcd (uint8_t val) { return val + 6 * (val / 10); }
 
 // A convenient accessor for using "the compiler's time":
 //   DateTime now (__DATE__, __TIME__);
@@ -57,16 +61,23 @@ uint8_t RTC_UpdateTime (DateTime time)
     else
     {
         i2c_start_wait(I2CADDR+I2C_WRITE);     // set device address and write mode
-        i2c_write(0x00);                       // write address = 0
-        i2c_write(bin2bcd(time.second));       // write data to address 0
-        i2c_write(bin2bcd(time.minute));       // write data to address 1
-        i2c_write(bin2bcd(time.hour));         // write data to address 2
+        ret += i2c_write(0x00);                       // write address = 0
+        ret += i2c_write(bin2bcd(time.second) & 0x80);// write data to address 0
+        ret += i2c_write(bin2bcd(time.minute));       // write data to address 1
+        ret += i2c_write(bin2bcd(time.hour) & 0x40);         // write data to address 2
         i2c_stop();                            // set stop conditon = release bus
+        if ( ret )
+        {
+        i2c_stop();
+        LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid write
+        LEDflashAlert();
+        LEDflashData(ret);
+        }
     }
 
     // return 0 for success
     // return error code for failure
-
+    return ret;
 
 }
 
@@ -91,24 +102,13 @@ DateTime RTC_GetTime ()
         /* issuing start condition ok, device accessible */
         i2c_write(0x00);                            // write address = 0
         i2c_rep_start(I2CADDR+I2C_READ);            // set device address and read mode
-        temptime.second = bcd2bin(i2c_readAck());   // read one byte form address 0
+        temptime.second = bcd2bin(i2c_readAck() & ~(0x80));   // read one byte form address 0
         temptime.minute = bcd2bin(i2c_readAck());   // read one byte form address 0
-        temptime.hour = bcd2bin(i2c_readAck());     // read one byte form address 0
+        temptime.hour = bcd2bin(i2c_readAck() & ~(0x40));     // read one byte form address 0
         i2c_stop();                                 // set stop condition = release bus
     }
     return temptime;
 }
 
-
-static uint8_t bcd2bin (uint8_t val) 
-{ 
-    return val - 6 * (val >> 4); 
-}
-
-
-static uint8_t bin2bcd (uint8_t val) 
-{ 
-    return val + 6 * (val / 10); 
-}
 
 

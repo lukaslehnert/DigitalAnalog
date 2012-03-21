@@ -19,7 +19,7 @@ int main(void) {
     DateTime Time;
     i2c_init();
 
-    unsigned char ret;
+    //unsigned char ret;
 
     for(;;)
     {
