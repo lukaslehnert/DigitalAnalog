@@ -29,7 +29,7 @@ int main(void) {
         LEDflashData(Time.minute);
         LEDflashData(Time.second);
 
-        Time.second++;
+        Time.minute++;
     //    LEDflashData(Time.second);
 
         delayms(1000);
