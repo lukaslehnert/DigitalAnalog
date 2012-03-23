@@ -65,6 +65,7 @@ uint8_t RTC_UpdateTime (DateTime time)
         ret += i2c_write(bin2bcd(time.second) & 0x80);// write data to address 0
         ret += i2c_write(bin2bcd(time.minute));       // write data to address 1
         ret += i2c_write(bin2bcd(time.hour) & 0x40);         // write data to address 2
+        // The error code from below indicates that these writes are failing (0b00000011)
         i2c_stop();                            // set stop conditon = release bus
         if ( ret )
         {
