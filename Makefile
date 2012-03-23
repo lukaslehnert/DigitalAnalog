@@ -19,18 +19,21 @@ all: $(TARGET).hex
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .cc.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 .cpp.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.S.o:
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o *.hex *.obj
 
 test1.o: test1.cc
 
-i2cmaster.o: i2cmaster.S i2cmaster.h
-	$(CC) $(CFLAGS) -x assembler-with-cpp -Wa,-gstabs -c $< -o $@
+#i2cmaster.o: i2cmaster.S i2cmaster.h
+#	$(CC) $(CFLAGS) -x assembler-with-cpp -Wa,-gstabs -c $< -o $@
 
 %.hex: %.obj
 	@echo building .hex
