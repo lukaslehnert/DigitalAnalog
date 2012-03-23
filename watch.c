@@ -4,6 +4,7 @@
 #include "i2cmaster.h"
 #include "RTC.h"
 #include "LEDstatus.h"
+#include "shift.h"
 
 
 #define I2CADDR 0xDE
@@ -25,6 +26,7 @@ int main(void) {
 
         Time = RTC_GetTime();
         LEDflashSignal();
+        SR_outputByte(Time.second);
         LEDflashData(Time.hour);
         LEDflashData(Time.minute);
         LEDflashData(Time.second);
