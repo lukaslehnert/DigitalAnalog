@@ -32,7 +32,7 @@ uint8_t RTC_SetTime (const char* time)
     temptime.second = conv2d(time + 6);
 
     // Now write to RTC device.
-    
+
     RTC_UpdateTime(temptime);
 
     // return 0 for success
@@ -68,10 +68,10 @@ uint8_t RTC_UpdateTime (DateTime time)
         i2c_stop();                            // set stop conditon = release bus
         if ( ret )
         {
-        i2c_stop();
-        LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid write
-        LEDflashAlert();
-        LEDflashData(ret);
+            i2c_stop();
+            LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid write
+            LEDflashAlert();
+            LEDflashData(ret);
         }
     }
 
