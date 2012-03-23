@@ -7,7 +7,7 @@
 
 
 
-void SR_setup(void)
+void SR_init(void)
 {
     CONTROL_DDR |= 1<<DATA_PIN;     // Set data pin to output
     CONTROL_DDR |= 1<<CLOCK_PIN;    // Set data pin to output
@@ -33,18 +33,18 @@ void SR_outputByte(uint8_t byte)
 }
 
 
-void SR_push0(void)
+void SR_push1(void)
 {
-    CONTROL_PORT |= 1<<DATA_PIN;  // Data pin low
+    CONTROL_PORT |= 1<<DATA_PIN;  // Data pin high
 
     SR_tick();
 }
 
 
 
-void SR_push1(void)
+void SR_push0(void)
 {
-    CONTROL_PORT &= ~(1<<DATA_PIN); // Data pin high
+    CONTROL_PORT &= ~(1<<DATA_PIN); // Data pin low
 
     SR_tick();
 }

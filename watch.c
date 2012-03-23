@@ -18,6 +18,7 @@ int main(void) {
     RTC_SetTime(__TIME__);
     DateTime Time;
     i2c_init();
+    SR_init();
 
     //unsigned char ret;
 
@@ -26,10 +27,11 @@ int main(void) {
 
         Time = RTC_GetTime();
         LEDflashSignal();
-        SR_outputByte(Time.second);
+        SR_outputByte(0xFF);
         LEDflashData(Time.hour);
         LEDflashData(Time.minute);
         LEDflashData(Time.second);
+        SR_outputByte(0x00);
 
         Time.minute++;
     //    LEDflashData(Time.second);
