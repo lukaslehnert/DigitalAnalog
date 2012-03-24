@@ -3,6 +3,7 @@
 #include "RTC.h"
 
 #include "LEDstatus.h"
+#include "shift.h"
 
 #define SLAVE_ADDR 0x6F
 
@@ -55,13 +56,14 @@ uint8_t RTC_UpdateTime (DateTime time)
     {
         /* failed to issue start condition, possibly no device found */
         i2c_stop();
-        LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid start condition.
-        LEDflashAlert();
+        SR_outputByte(ret);
+        for(;;)
+            LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid start condition.
     }
     else
     {
         i2c_start_wait(I2CADDR+I2C_WRITE);     // set device address and write mode
-        ret += i2c_write(0x00);                       // write address = 0
+        ret = i2c_write(0x00);                       // write address = 0
         ret += i2c_write(bin2bcd(time.second) & 0x80);// write data to address 0
         ret += i2c_write(bin2bcd(time.minute));       // write data to address 1
         ret += i2c_write(bin2bcd(time.hour) & 0x40);         // write data to address 2
@@ -69,10 +71,9 @@ uint8_t RTC_UpdateTime (DateTime time)
         i2c_stop();                            // set stop conditon = release bus
         if ( ret )
         {
-            i2c_stop();
-            LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid write
-            LEDflashAlert();
-            LEDflashData(ret);
+            SR_outputByte(ret);
+            for(;;)
+                LEDflashAlert();    // Flash an alert signal to indicate that we have a failed write
         }
     }
 
@@ -105,7 +106,7 @@ DateTime RTC_GetTime ()
         i2c_rep_start(I2CADDR+I2C_READ);            // set device address and read mode
         temptime.second = bcd2bin(i2c_readAck() & ~(0x80));   // read one byte form address 0
         temptime.minute = bcd2bin(i2c_readAck());   // read one byte form address 0
-        temptime.hour = bcd2bin(i2c_readAck() & ~(0x40));     // read one byte form address 0
+        temptime.hour = bcd2bin(i2c_readNak() & ~(0x40));     // read one byte form address 0
         i2c_stop();                                 // set stop condition = release bus
     }
     return temptime;

@@ -2,7 +2,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-
+uint8_t clock_noop = 0;
 
 void SR_init(void);
 void SR_outputByte(uint8_t);
