@@ -9,7 +9,7 @@ OBJ2HEX=avr-objcopy
 LDFLAGS=-Wl,-gc-sections -Wl,-relax
 
 TARGET=watch
-OBJECT_FILES=watch.o i2cmaster.o LEDstatus.o RTC.o
+OBJECT_FILES=watch.o i2cmaster.o LEDstatus.o RTC.o shift.o
 
 .SECONDARY : $(OBJECT_FILES)
 
