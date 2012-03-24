@@ -5,6 +5,8 @@
 #define DATA_PIN        PA2
 #define CLOCK_PIN       PA3
 
+uint8_t clock_noop = 0;
+
 
 
 void SR_init(void)
@@ -54,7 +56,7 @@ void SR_push0(void)
 void SR_tick(void)
 {
     CONTROL_PORT &= ~(1<<CLOCK_PIN); // Clock pin high
-    clock_noop++;
+    clock_noop << 1;
     CONTROL_PORT |= 1<<CLOCK_PIN;  // Clock pin low
 }
 
