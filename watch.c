@@ -24,19 +24,12 @@ int main(void) {
     {
 
         Time = RTC_GetTime();
-        LEDflashSignal();
-        SR_outputByte(0xFF);
-        LEDflashData(Time.hour);
-        LEDflashData(Time.minute);
-        LEDflashData(Time.second);
-        SR_outputByte(0x00);
+        SR_outputByte(Time.minute);
+        delayms(500);
 
         Time.minute++;
-    //    LEDflashData(Time.second);
 
-        delayms(1000);
         RTC_UpdateTime(Time);
-        delayms(1000);
     }
 
     /*ret = i2c_start(I2CADDR+I2C_WRITE);       // set device address and write mode

@@ -20,6 +20,11 @@ void LEDon()
     PORTB &= ~(1<<PB0); /* LED on */
 }
 
+void LEDoff()
+{
+    PORTB |= 1<<PB0; /* LED off */
+}
+
 
 void LEDflashSignal()
 {

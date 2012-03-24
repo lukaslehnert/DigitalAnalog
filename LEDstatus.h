@@ -5,6 +5,7 @@
 
 
 void LEDon();
+void LEDoff();
 void LEDflashSignal();
 void LEDflashData(unsigned char);
 void LEDflashAlert();
