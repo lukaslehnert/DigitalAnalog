@@ -56,7 +56,7 @@ void SR_push0(void)
 void SR_tick(void)
 {
     CONTROL_PORT &= ~(1<<CLOCK_PIN); // Clock pin high
-    clock_noop << 1;
+//    clock_noop << 1;
     CONTROL_PORT |= 1<<CLOCK_PIN;  // Clock pin low
 }
 
