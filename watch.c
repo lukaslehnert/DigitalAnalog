@@ -24,7 +24,7 @@ int main(void) {
     {
 
         Time = RTC_GetTime();
-        SR_outputByte(Time.second);
+        SR_outputByte(Time.hour);
         delayms(500);
 
   //      Time.minute++;
