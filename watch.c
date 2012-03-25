@@ -13,7 +13,7 @@
 
 int main(void) {
 
-    RTC_SetTime(__TIME__);
+    RTC_init(__TIME__);
     DateTime Time;
     i2c_init();
     SR_init();
@@ -24,12 +24,10 @@ int main(void) {
     {
 
         Time = RTC_GetTime();
-        SR_outputByte(Time.minute);
-        delayms(50);
+        SR_outputByte(Time.second);
+        delayms(500);
 
-        Time.minute++;
 
-        RTC_UpdateTime(Time);
     }
 
     /*ret = i2c_start(I2CADDR+I2C_WRITE);       // set device address and write mode
