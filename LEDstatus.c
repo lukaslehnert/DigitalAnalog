@@ -20,6 +20,11 @@ void LEDon()
     PORTB &= ~(1<<PB0); /* LED on */
 }
 
+void LEDoff()
+{
+    PORTB |= 1<<PB0; /* LED off */
+}
+
 
 void LEDflashSignal()
 {
@@ -34,31 +39,26 @@ void LEDflashSignal()
 void LEDflashData(unsigned char data)
 {
     DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    unsigned char stored = data;
     unsigned char i;
-    while(1)
+    LEDflashAlert();
+    for(i = 8 ; i>0 ; i--) 
     {
-        LEDflashAlert();
-        for(i = 8 ; i>0 ; i--) 
-        {
-            PORTB &= ~(1<<PB0); /* LED on */
+        PORTB &= ~(1<<PB0); /* LED on */
+        delayms(100);
+        PORTB |= 1<<PB0; /* LED off */
+        delayms(100);
+
+
+        PORTB &= ~(1<<PB0); /* LED on */
+        if((data & 0x80)) 
+            delayms(500);
+        else
             delayms(100);
-            PORTB |= 1<<PB0; /* LED off */
-            delayms(100);
+        PORTB |= 1<<PB0; /* LED off */
 
+        data <<= 1;
 
-            PORTB &= ~(1<<PB0); /* LED on */
-            if((data & 0x80)) 
-                delayms(500);
-            else
-                delayms(100);
-            PORTB |= 1<<PB0; /* LED off */
-
-            data <<= 1;
-
-            delayms(900);
-        }
-        data = stored;
+        delayms(900);
     }
 }
 
