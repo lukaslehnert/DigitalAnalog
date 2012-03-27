@@ -26,8 +26,7 @@ uint8_t RTC_init(const char* time)
 {
     // sample input: time = "12:34:56"
     DateTime temptime;
-    uint8_t code = 0;
-    uint8_t ret;
+    uint8_t ret = 0;
 
     temptime.hour = conv2d(time);
     temptime.minute = conv2d(time + 3);
@@ -58,7 +57,7 @@ uint8_t RTC_init(const char* time)
     // return 0 for success
     // return error code for failure
 
-    return code;
+    return ret;
 }
 
 

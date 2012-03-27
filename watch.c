@@ -27,7 +27,9 @@ int main(void) {
     i2c_init();
     SR_init();
 
-    SR_outputByte(Time.second);
+    Time = RTC_GetTime();
+    SR_outputByte(Time.minute);
+    counter = Time.second;
 
     PORTB |= (1<<PCINT10);  // Configure as input pin
     PCMSK1 |= (1<<PCINT10);   // Pin Change interrupt Mask: listen to portb bit 2 
@@ -40,13 +42,13 @@ int main(void) {
 
     for(;;)
     {
-        if(counter == 0)
+        if(counter >=58)
         {
             cli();      // disable interrupts
             counter = 0;
             Time = RTC_GetTime();
             SR_outputByte(Time.minute);
-            delayms(2000);
+            delayms(1000);
             sei();         // enable all interrupts 
         }
 
