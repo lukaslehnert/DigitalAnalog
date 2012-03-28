@@ -48,8 +48,8 @@
 
 ;#define SDA 6  ;PA6
 ;#define SCL 4  ;PA4
-#define SDA_PORT        PORTA
-#define SCL_PORT        PORTA 
+;#define SDA_PORT        PORTA
+;#define SCL_PORT        PORTA 
 
 ;******
 
