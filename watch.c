@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/sleep.h>
 #include "i2cmaster.h"
 #include "RTC.h"
 #include "LEDstatus.h"
@@ -42,15 +43,23 @@ int main(void) {
 
     for(;;)
     {
-        if(counter >=58)
+     
+        if(counter >=10)
         {
             cli();      // disable interrupts
             counter = 0;
             Time = RTC_GetTime();
-            SR_outputByte(Time.minute);
+            SR_outputByte(Time.second);
             delayms(1000);
             sei();         // enable all interrupts 
         }
+
+
+        // SLEEP
+        set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+        sleep_mode();
+        // Woke up!
+        
 
     }
 
