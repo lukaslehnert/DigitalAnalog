@@ -90,6 +90,8 @@ corresponding Interrupt Vector. The flag is cleared when the interrupt routine i
 
 */
 
-INT_init();
+void    INT_attachInterruptA(uint8_t);
+void    INT_attachInterruptB(uint8_t);
+
 
 

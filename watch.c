@@ -4,6 +4,7 @@
 #include "RTC.h"
 #include "LEDstatus.h"
 #include "shift.h"
+#include "interrupt.h"
 
 
 #define I2CADDR 0xDE
@@ -31,27 +32,33 @@ int main(void) {
     SR_outputByte(Time.minute);
     counter = Time.second;
 
-    PORTB |= (1<<PCINT10);  // Configure as input pin
-    PCMSK1 |= (1<<PCINT10);   // Pin Change interrupt Mask: listen to portb bit 2 
-    GIMSK |= (1<<PCIE1);   // enable PCINT interrupt in the General Interrupt Mask
+    /*
+       PORTB |= (1<<PCINT10);  // Configure as input pin
+       PCMSK1 |= (1<<PCINT10);   // Pin Change interrupt Mask: listen to portb bit 2 
+       GIMSK |= (1<<PCIE1);   // enable PCINT interrupt in the General Interrupt Mask
+       */
+
+    INT_attachInterruptB(PCINT10);
     sei();         // enable all interrupts 
-
-
 
     //unsigned char ret;
 
     for(;;)
     {
-        if(counter >=58)
+        if(counter >= 100)
         {
             cli();      // disable interrupts
             counter = 0;
             Time = RTC_GetTime();
-            SR_outputByte(Time.minute);
-            delayms(1000);
             sei();         // enable all interrupts 
         }
+        if(counter % 4)
+        {
 
+            SR_outputByte(Time.minute);
+            delayms(10);
+            SR_outputByte(0x00);
+        }
     }
 
     /*ret = i2c_start(I2CADDR+I2C_WRITE);       // set device address and write mode
