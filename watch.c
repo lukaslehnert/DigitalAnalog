@@ -50,7 +50,7 @@ int main(void) {
             counter = 0;
             Time = RTC_GetTime();
             SR_outputByte(Time.second);
-            delayms(1000);
+            _delay_ms(1000);
             sei();         // enable all interrupts 
         }
 
