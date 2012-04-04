@@ -49,9 +49,11 @@ int main(void) {
     {
         cli();      // disable interrupts while we do our house keeping
 
-        if (counter > lastcount)
+        if (counter > lastcount+1)
         {
             SR_outputByte(Time.minute);
+            _delay_ms(75);
+            SR_clear();
             lastcount = counter;
         }
 
