@@ -5,7 +5,7 @@
 #define DATA_PIN        PA2
 #define CLOCK_PIN       PA3
 
-uint8_t clock_noop = 0;
+//uint8_t clock_noop = 0;
 
 
 

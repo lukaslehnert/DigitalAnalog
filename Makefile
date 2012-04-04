@@ -1,7 +1,8 @@
 DEVICE = attiny24a
 F_CPU = 1000000
 
-CFLAGS = -g -Wall -mcall-prologues -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CFLAGS = -g -Wall -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+#CFLAGS = -g -Wall -mcall-prologues -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CPPFLAGS = $(CFLAGS) -fno-exceptions -Wundef
 
 CC=avr-gcc
