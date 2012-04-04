@@ -11,9 +11,12 @@
 
 volatile uint8_t counter;   // Declare volatile to prevent GCC from optimizing it out.
 
-ISR(PCINT1_vect)        // interrupt service routine 
-{              // called when PCINT0 changes state 
-    counter++;
+ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes state)
+{   
+
+    // Which pin caused the interrupt?
+    if (PINB & (0x01<<PCINT10))  // PCINT10 (Pin 5)(square wave input) is high
+        counter++;
 
     return; 
 } 
@@ -23,13 +26,14 @@ ISR(PCINT1_vect)        // interrupt service routine
 int main(void) {
 
     DateTime Time;
+    uint8_t lastcount = 0;
 
     RTC_init(__TIME__);
     i2c_init();
     SR_init();
 
     Time = RTC_GetTime();
-    // SR_outputByte(Time.minute);
+    SR_outputByte(Time.minute);
     counter = Time.second;
 
     PORTB |= (1<<PCINT10);  // Configure as input pin
@@ -43,32 +47,27 @@ int main(void) {
 
     for(;;)
     {
-        cli();      // disable interrupts
-     
-        if(counter >=10)
-        {
-            counter = 0;
-            Time = RTC_GetTime();
-            delayms(1000);
-        }
+        cli();      // disable interrupts while we do our house keeping
 
-        if(!(counter % 4))
+        if (counter > lastcount)
         {
             SR_outputByte(Time.minute);
-            _delay_ms(30);
-            SR_clear();
+            lastcount = counter;
         }
 
+        if (counter >= 59) // There are 60 seconds in a minute, numbered 0-59.
+        {
+            Time = RTC_GetTime();
+            counter = Time.second;
+            lastcount = 0;
+        }
 
         sei();         // enable all interrupts 
+
         // SLEEP
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
         sleep_mode();
         // Woke up!
-
-
     }
-
-
 }
 
