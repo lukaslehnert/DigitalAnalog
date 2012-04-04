@@ -4,6 +4,8 @@
 #include <util/delay.h>
 
 
-INT_init();
+void    INT_attachInterruptA(uint8_t);
+void    INT_attachInterruptB(uint8_t);
+
 
 
