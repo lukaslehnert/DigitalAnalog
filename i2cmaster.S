@@ -48,13 +48,15 @@
 
 ;#define SDA 6  ;PA6
 ;#define SCL 4  ;PA4
-#define SDA_PORT        PORTA
-#define SCL_PORT        PORTA 
+;#define SDA_PORT        PORTA
+;#define SCL_PORT        PORTA 
 
 ;******
 
 ;-- map the IO register back into the IO address space
+#undef  SDA_DDR
 #define SDA_DDR		(_SFR_IO_ADDR(SDA_PORT) - 1)
+#undef  SCL_DDR
 #define SCL_DDR		(_SFR_IO_ADDR(SCL_PORT) - 1)
 #define SDA_OUT		_SFR_IO_ADDR(SDA_PORT)
 #define SCL_OUT		_SFR_IO_ADDR(SCL_PORT)

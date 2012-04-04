@@ -1,7 +1,8 @@
 DEVICE = attiny24a
-F_CPU = 1000000
+F_CPU = 8000000
 
-CFLAGS = -g -Wall -mcall-prologues -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CFLAGS = -g -Wall -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+#CFLAGS = -g -Wall -mcall-prologues -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CPPFLAGS = $(CFLAGS) -fno-exceptions -Wundef
 
 CC=avr-gcc
@@ -9,7 +10,7 @@ OBJ2HEX=avr-objcopy
 LDFLAGS=-Wl,-gc-sections -Wl,-relax
 
 TARGET=watch
-OBJECT_FILES=watch.o i2cmaster.o LEDstatus.o RTC.o
+OBJECT_FILES=watch.o i2cmaster.o LEDstatus.o RTC.o shift.o interrupt.o
 
 .SECONDARY : $(OBJECT_FILES)
 
@@ -19,18 +20,21 @@ all: $(TARGET).hex
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .cc.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 .cpp.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.S.o:
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o *.hex *.obj
 
 test1.o: test1.cc
 
-i2cmaster.o: i2cmaster.S i2cmaster.h
-	$(CC) $(CFLAGS) -x assembler-with-cpp -Wa,-gstabs -c $< -o $@
+#i2cmaster.o: i2cmaster.S i2cmaster.h
+#	$(CC) $(CFLAGS) -x assembler-with-cpp -Wa,-gstabs -c $< -o $@
 
 %.hex: %.obj
 	@echo building .hex
