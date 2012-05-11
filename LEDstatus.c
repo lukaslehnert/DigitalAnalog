@@ -16,45 +16,45 @@ void delayms(uint16_t millis)
 
 void LEDon()
 {
-    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    PORTB &= ~(1<<PB0); /* LED on */
+    DDRA |= 1<<PA7; // set PA7 to output.  "output" means "sink current"
+    PORTA &= ~(1<<PA7); /* LED on */
 }
 
 void LEDoff()
 {
-    PORTB |= 1<<PB0; /* LED off */
+    PORTA |= 1<<PA7; /* LED off */
 }
 
 
 void LEDflashSignal()
 {
-    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    PORTB &= ~(1<<PB0); /* LED on */
+    DDRA |= 1<<PA7; // set PA7 to output.  "output" means "sink current"
+    PORTA &= ~(1<<PA7); /* LED on */
     _delay_ms(500);
-    PORTB |= 1<<PB0; /* LED off */
+    PORTA |= 1<<PA7; /* LED off */
     _delay_ms(500);
 }
 
 
 void LEDflashData(unsigned char data)
 {
-    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
+    DDRA |= 1<<PA7; // set PA7 to output.  "output" means "sink current"
     unsigned char i;
     LEDflashAlert();
     for(i = 8 ; i>0 ; i--) 
     {
-        PORTB &= ~(1<<PB0); /* LED on */
+        PORTA &= ~(1<<PA7); /* LED on */
         _delay_ms(100);
-        PORTB |= 1<<PB0; /* LED off */
+        PORTA |= 1<<PA7; /* LED off */
         _delay_ms(100);
 
 
-        PORTB &= ~(1<<PB0); /* LED on */
+        PORTA &= ~(1<<PA7); /* LED on */
         if((data & 0x80)) 
             _delay_ms(500);
         else
             _delay_ms(100);
-        PORTB |= 1<<PB0; /* LED off */
+        PORTA |= 1<<PA7; /* LED off */
 
         data <<= 1;
 
@@ -65,19 +65,19 @@ void LEDflashData(unsigned char data)
 
 void LEDflashAlert()
 {
-    DDRB |= 1<<PB0; // set PB0 to output.  "output" means "sink current"
-    PORTB |= 1<<PB0; /* LED off */
+    DDRA |= 1<<PA7; // set PA7 to output.  "output" means "sink current"
+    PORTA |= 1<<PA7; /* LED off */
     _delay_ms(100);
-    PORTB &= ~(1<<PB0); /* LED on */
+    PORTA &= ~(1<<PA7); /* LED on */
     _delay_ms(100);
-    PORTB |= 1<<PB0; /* LED off */
+    PORTA |= 1<<PA7; /* LED off */
     _delay_ms(100);
-    PORTB &= ~(1<<PB0); /* LED on */
+    PORTA &= ~(1<<PA7); /* LED on */
     _delay_ms(100);
-    PORTB |= 1<<PB0; /* LED off */
+    PORTA |= 1<<PA7; /* LED off */
     _delay_ms(100);
-    PORTB &= ~(1<<PB0); /* LED on */
+    PORTA &= ~(1<<PA7); /* LED on */
     _delay_ms(100);
-    PORTB |= 1<<PB0; /* LED off */
+    PORTA |= 1<<PA7; /* LED off */
     _delay_ms(1000);
 }

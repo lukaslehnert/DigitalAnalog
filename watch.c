@@ -25,6 +25,10 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 
 int main(void) {
 
+    for( ; ; )
+        LEDflashSignal();
+
+
     DateTime Time;
     uint8_t lastcount = 0;
 
