@@ -25,15 +25,15 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 
 int main(void) {
 
-    for( ; ; )
+//  for( ; ; )
         LEDflashSignal();
 
 
     DateTime Time;
     uint8_t lastcount = 0;
 
-    RTC_init(__TIME__);
-    i2c_init();
+//    RTC_init(__TIME__);
+//    i2c_init();
     SR_init();
 
     Time = RTC_GetTime();

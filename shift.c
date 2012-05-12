@@ -13,8 +13,13 @@ void SR_init(void)
 {
     CONTROL_DDR |= 1<<DATA_PIN;     // Set data pin to output
     CONTROL_DDR |= 1<<CLOCK_PIN;    // Set data pin to output
+    
+    uint8_t i = 0;
 
-    SR_clear();      // Start with a clean slate
+    for(i=0;i<12;i++)
+        SR_push1();
+
+    //SR_clear();      // Start with a clean slate
 }
 
 
