@@ -29,7 +29,7 @@ all: $(TARGET).hex
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o *.hex *.obj
+	rm -f *.o *.hex *.obj pcb/watch.[bs]\#[0-9]
 
 test1.o: test1.cc
 
