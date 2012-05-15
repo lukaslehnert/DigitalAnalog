@@ -5,6 +5,7 @@
 #include "RTC.h"
 #include "LEDstatus.h"
 #include "shift.h"
+#include "face.h"
 
 
 #define I2CADDR 0xDE
@@ -25,8 +26,7 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 
 int main(void) {
 
-//  for( ; ; )
-        LEDflashSignal();
+    LEDflashSignal();
 
 
     DateTime Time;
@@ -35,9 +35,13 @@ int main(void) {
 //    RTC_init(__TIME__);
 //    i2c_init();
     SR_init();
+    SR_flashy();
+    Time.minute=42;
+    Time.hour=42;
+    WF_displayTime(Time);
 
-    Time = RTC_GetTime();
-    SR_outputByte(Time.minute);
+//    Time = RTC_GetTime();
+//    SR_outputByte(Time.minute);
     counter = Time.second;
 
     PORTB |= (1<<PCINT10);  // Configure as input pin
