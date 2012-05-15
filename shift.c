@@ -5,7 +5,7 @@
 #define DATA_PIN        PA2
 #define CLOCK_PIN       PA3
 
-//uint8_t clock_noop = 0;
+uint8_t clock_noop = 0;
 
 
 
@@ -13,13 +13,10 @@ void SR_init(void)
 {
     CONTROL_DDR |= 1<<DATA_PIN;     // Set data pin to output
     CONTROL_DDR |= 1<<CLOCK_PIN;    // Set data pin to output
-    
+
     uint8_t i = 0;
 
-    for(i=0;i<12;i++)
-        SR_push1();
-
-    //SR_clear();      // Start with a clean slate
+    SR_clear();      // Start with a clean slate
 }
 
 
@@ -61,7 +58,7 @@ void SR_push0(void)
 void SR_tick(void)
 {
     CONTROL_PORT &= ~(1<<CLOCK_PIN); // Clock pin high
-//    clock_noop << 1;
+    //    clock_noop << 1;
     CONTROL_PORT |= 1<<CLOCK_PIN;  // Clock pin low
 }
 
@@ -71,9 +68,33 @@ void SR_clear(void)
 {
     uint8_t i;    
 
-    for(i = 8 ; i>0 ; i--)
+    for(i = 12 ; i>0 ; i--)
         SR_push0();
 }
 
 
+void SR_flashy(void)
+{
+    uint8_t i;
+    uint8_t j;
+    uint8_t k;
+    uint8_t on;
+    uint8_t off;
+    uint8_t l = 2;
+
+    for(i=80 ; i>0 ; i=i*100/110)
+    {
+        SR_push1();
+        for( j=0 ; j<12 ; j++ )
+        {
+            for ( k=0 ; k<=i ; k++) 
+            {
+                _delay_ms(1);
+            }
+            SR_push0();
+        }
+    }   
+
+    SR_clear();
+}
 
