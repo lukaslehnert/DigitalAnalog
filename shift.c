@@ -14,8 +14,6 @@ void SR_init(void)
     CONTROL_DDR |= 1<<DATA_PIN;     // Set data pin to output
     CONTROL_DDR |= 1<<CLOCK_PIN;    // Set data pin to output
 
-    uint8_t i = 0;
-
     SR_clear();      // Start with a clean slate
 }
 
@@ -78,9 +76,6 @@ void SR_flashy(void)
     uint8_t i;
     uint8_t j;
     uint8_t k;
-    uint8_t on;
-    uint8_t off;
-    uint8_t l = 2;
 
     for(i=80 ; i>0 ; i=i*100/110)
     {
