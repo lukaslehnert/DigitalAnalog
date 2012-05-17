@@ -27,6 +27,7 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 int main(void) {
 
     LEDflashSignal();
+    LEDflashSignal();
 
 
     DateTime Time;
@@ -34,15 +35,24 @@ int main(void) {
 
 //    RTC_init(__TIME__);
 //    i2c_init();
+    //WF_init();
     SR_init();
     SR_flashy();
+    //WF_clear();
     Time.minute=42;
-    Time.hour=42;
-    WF_displayTime(Time);
+    Time.hour=5;
+    //WF_displayTime(Time);
 
 //    Time = RTC_GetTime();
 //    SR_outputByte(Time.minute);
     counter = Time.second;
+    
+    WF_freeRun();
+
+    for(;;)
+    {
+    }
+
 
     PORTB |= (1<<PCINT10);  // Configure as input pin
     PCMSK1 |= (1<<PCINT10);   // Pin Change interrupt Mask: listen to portb bit 2 
