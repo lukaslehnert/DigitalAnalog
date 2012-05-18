@@ -82,29 +82,42 @@ void WF_displayTime(DateTime time)
     WF_clear();
 
     // We have to set the minutes first, then the hours.
+    CONTROL_PORT |= 1<<HOUR_DATA;       // Hour data pin high // This should shift in the hour all cool
     CONTROL_PORT |= 1<<MIN_DATA;        // Minute data pin high
     CONTROL_PORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
     // might need delays here.
     CONTROL_PORT |= 1<<MIN_CLOCK;       // Minute clock pin low
+    CONTROL_PORT &= ~(1<<HOUR_DATA);    // Hour data pin low. // end of cool shifting
     CONTROL_PORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
     for( i = 0; i< time.minute/5 ; i++) // Now that we've loaded a bit into the SR, shift it over to
     {                                   // where we want it.
         CONTROL_PORT &= ~(1<<MIN_CLOCK);
-        // might need delays here.
+        CONTROL_PORT &= ~(1<<HOUR_CLOCK);
+        _delay_ms(80);
         CONTROL_PORT |= 1<<MIN_CLOCK;
+        CONTROL_PORT |= 1<<HOUR_CLOCK;
+    }
+    for( i=time.minute/5; i<12; i++) // shift out the extra hour bit
+    {
+        CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
+        _delay_ms(80);
+        CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
+
     }
 
 
     // Now set the hours:
     CONTROL_PORT |= 1<<HOUR_DATA;       // Hour data pin high
+    _delay_ms(2);
     CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
-    // might need delays here.
+    _delay_ms(2);
     CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
+    _delay_ms(2);
     CONTROL_PORT &= ~(1<<HOUR_DATA);    // Hour data pin low. 
     for( i = 0; i< time.hour ; i++)     // Now that we've loaded a bit into the SR, shift it over to
     {                                   // where we want it.
         CONTROL_PORT &= ~(1<<HOUR_CLOCK);
-        // might need delays here.
+        _delay_ms(80);
         CONTROL_PORT |= 1<<HOUR_CLOCK;
     }
 
@@ -124,32 +137,62 @@ void WF_hourInc()
 
 void WF_freeRun()
 {
+    WF_clear();
+
     uint8_t minute = 1;
+    uint8_t hour = 1;
+
     for(;;)
     {
 
         if ( minute == 13 )
+        {
             minute = 1;
+            hour++;
+        }
+
+        if ( hour == 13 )
+            hour = 1;
 
         if (minute == 1)
         {
             LEDflashSignal();
             // Set the new minute bit
             CONTROL_PORT |= 1<<MIN_DATA;
-            _delay_ms(1);
+            _delay_ms(2);
             CONTROL_PORT &= ~(1<<MIN_CLOCK);
-            _delay_ms(1);        // might need delays here.
+            _delay_ms(2);        // might need delays here.
             CONTROL_PORT |= 1<<MIN_CLOCK;
-            //CONTROL_PORT &= ~(1<<MIN_DATA);
         }
         else
         {
             CONTROL_PORT &= ~(1<<MIN_DATA);
-            _delay_ms(1);
+            _delay_ms(2);
             CONTROL_PORT &= ~(1<<MIN_CLOCK);
-            _delay_ms(1);
+            _delay_ms(2);
             CONTROL_PORT |= 1<<MIN_CLOCK;
         }
+
+        if (hour == 1)
+        {
+            CONTROL_PORT |= 1<<HOUR_DATA;
+            _delay_ms(2);
+            CONTROL_PORT &= ~(1<<HOUR_CLOCK);
+            _delay_ms(2);        // might need delays here.
+            CONTROL_PORT |= 1<<HOUR_CLOCK;
+        }
+        else
+        {
+            CONTROL_PORT &= ~(1<<HOUR_DATA);
+            _delay_ms(2);
+            CONTROL_PORT &= ~(1<<HOUR_CLOCK);
+            _delay_ms(2);
+            CONTROL_PORT |= 1<<HOUR_CLOCK;
+        }
+
+
+
+
 
         minute++;
         _delay_ms(1000);

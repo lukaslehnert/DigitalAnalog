@@ -26,28 +26,24 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 
 int main(void) {
 
-    LEDflashSignal();
-    LEDflashSignal();
-
-
     DateTime Time;
     uint8_t lastcount = 0;
 
 //    RTC_init(__TIME__);
 //    i2c_init();
-    //WF_init();
-    SR_init();
+    WF_init();
+    SR_init(PA1, PA2);
+    SR_init(PA2, PA3);
     SR_flashy();
-    //WF_clear();
     Time.minute=42;
     Time.hour=5;
-    //WF_displayTime(Time);
+    WF_displayTime(Time);
 
 //    Time = RTC_GetTime();
 //    SR_outputByte(Time.minute);
     counter = Time.second;
     
-    WF_freeRun();
+    //WF_freeRun();
 
     for(;;)
     {
@@ -69,9 +65,9 @@ int main(void) {
 
         if (counter > lastcount+1)
         {
-            SR_outputByte(Time.minute);
+        //    SR_outputByte(Time.minute);
             _delay_ms(75);
-            SR_clear();
+        //    SR_clear();
             lastcount = counter;
         }
 
