@@ -78,6 +78,10 @@ void WF_displayTime(DateTime time)
 
     uint8_t i;
 
+    if ( time.hour == 0 )
+        time.hour = 12;
+
+
     // Start by clearing the watch face:
     WF_clear();
 
