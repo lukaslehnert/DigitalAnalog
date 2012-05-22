@@ -3,7 +3,6 @@
 #include "RTC.h"
 
 #include "LEDstatus.h"
-#include "shift.h"
 
 #define SLAVE_ADDR 0x6F
 
@@ -44,7 +43,7 @@ uint8_t RTC_init(const char* time)
     {
         /* failed to issue start condition, possibly no device found */
         i2c_stop();
-        SR_outputByte(ret);
+    //    SR_outputByte(ret);
         LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid start condition.
     }
     else
@@ -67,8 +66,6 @@ uint8_t RTC_UpdateTime (DateTime time)
 
     uint8_t ret;
 
-
-
     // Now write to RTC device.
     ret = i2c_start(I2CADDR+I2C_WRITE);       // set device address and write mode
 
@@ -76,7 +73,7 @@ uint8_t RTC_UpdateTime (DateTime time)
     {
         /* failed to issue start condition, possibly no device found */
         i2c_stop();
-        SR_outputByte(ret);
+      //  SR_outputByte(ret);
         LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid start condition.
     }
     else
@@ -90,7 +87,7 @@ uint8_t RTC_UpdateTime (DateTime time)
         i2c_stop();                            // set stop conditon = release bus
         if ( ret )
         {
-            SR_outputByte(ret);
+//            SR_outputByte(ret);
             LEDflashAlert();    // Flash an alert signal to indicate that we have a failed write
         }
     }
@@ -127,6 +124,8 @@ DateTime RTC_GetTime ()
         temptime.hour = bcd2bin(i2c_readNak() & 0b000111111);     // read one byte form address 0
         i2c_stop();                                 // set stop condition = release bus
     }
+    
+
     return temptime;
 }
 

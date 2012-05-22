@@ -4,7 +4,6 @@
 #include "i2cmaster.h"
 #include "RTC.h"
 #include "LEDstatus.h"
-#include "shift.h"
 #include "face.h"
 
 
@@ -19,6 +18,8 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
     if (PINB & (0x01<<PCINT10))  // PCINT10 (Pin 5)(square wave input) is high
         counter++;
 
+    LEDflashSignal();
+
     return; 
 } 
 
@@ -29,27 +30,24 @@ int main(void) {
     DateTime Time;
     uint8_t lastcount = 0;
 
-//    RTC_init(__TIME__);
-//    i2c_init();
+    i2c_init();
+    RTC_init(__TIME__);
     WF_init();
-    SR_init(PA1, PA2);
-    SR_init(PA2, PA3);
-    SR_flashy();
-    Time.minute=42;
-    Time.hour=5;
-    WF_displayTime(Time);
+//    WF_flashy();
+    //Time.minute=42;
+    //Time.hour=5;
+    //WF_displayTime(Time);
 
-//    Time = RTC_GetTime();
-//    SR_outputByte(Time.minute);
-    counter = Time.second;
-    
-    //WF_freeRun();
-
-    for(;;)
+/*    for(;;)
     {
+        Time = RTC_GetTime();
+        WF_displayTime(Time);
+        _delay_ms(1000);
     }
+*/
+    counter = Time.second;
 
-
+    // Setup interrupt
     PORTB |= (1<<PCINT10);  // Configure as input pin
     PCMSK1 |= (1<<PCINT10);   // Pin Change interrupt Mask: listen to portb bit 2 
     GIMSK |= (1<<PCIE1);   // enable PCINT interrupt in the General Interrupt Mask
@@ -63,10 +61,17 @@ int main(void) {
     {
         cli();      // disable interrupts while we do our house keeping
 
+        Time = RTC_GetTime();
+        WF_displayTime(Time);
+        _delay_ms(500);
+
         if (counter > lastcount+1)
         {
+            LEDflashSignal();
+
+            WF_displayTime(Time);
         //    SR_outputByte(Time.minute);
-            _delay_ms(75);
+        //    _delay_ms(75);
         //    SR_clear();
             lastcount = counter;
         }
@@ -82,7 +87,7 @@ int main(void) {
 
         // SLEEP
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-        sleep_mode();
+    //    sleep_mode();
         // Woke up!
     }
 }

@@ -9,6 +9,5 @@ void WF_clear(void);
 void WF_allOn(void);
 void WF_freeRun(void);
 void WF_displayTime(DateTime);
-void WF_tickMinute(void);
-void WF_tickHour(void);
-void WF_hourInc(void);
+void WF_flashy(void);
+void WF_tick(_Bool ZeroOrOne, uint8_t DATA, uint8_t CLOCK);
