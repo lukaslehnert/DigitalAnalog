@@ -32,14 +32,12 @@ void WF_clear(void)
     for( i=0 ; i<16 ; i++)
     {
         CONTROL_PORT |= 1<<MIN_CLOCK;       // Minute clock pin low
-        _delay_ms(1);
         CONTROL_PORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
     }
 
     for( i=0 ; i<16 ; i++)
     {
         CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
-        _delay_ms(1);
         CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
     }
 
@@ -76,6 +74,9 @@ void WF_displayTime(DateTime time)
     //time.minute
     //time.hour
 
+    //uint8_t fancyness = 40;
+    uint8_t fancyness = 0;
+
     uint8_t i;
 
     if ( time.hour == 0 )
@@ -97,14 +98,14 @@ void WF_displayTime(DateTime time)
     {                                   // where we want it.
         CONTROL_PORT &= ~(1<<MIN_CLOCK);
         CONTROL_PORT &= ~(1<<HOUR_CLOCK);
-        _delay_ms(40);
+        _delay_ms(fancyness);
         CONTROL_PORT |= 1<<MIN_CLOCK;
         CONTROL_PORT |= 1<<HOUR_CLOCK;
     }
     for( i=time.minute/5; i<12; i++) // shift out the extra hour bit
     {
         CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
-        _delay_ms(40);
+        _delay_ms(fancyness);
         CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
 
     }
@@ -112,16 +113,13 @@ void WF_displayTime(DateTime time)
 
     // Now set the hours:
     CONTROL_PORT |= 1<<HOUR_DATA;       // Hour data pin high
-    _delay_ms(2);
     CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
-    _delay_ms(2);
     CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
-    _delay_ms(2);
     CONTROL_PORT &= ~(1<<HOUR_DATA);    // Hour data pin low. 
     for( i = 1; i< time.hour ; i++)     // Now that we've loaded a bit into the SR, shift it over to
     {                                   // where we want it.
         CONTROL_PORT &= ~(1<<HOUR_CLOCK);
-        _delay_ms(40);
+        _delay_ms(fancyness);
         CONTROL_PORT |= 1<<HOUR_CLOCK;
     }
 
@@ -210,7 +208,7 @@ void WF_tick(_Bool ZeroOrOne, uint8_t DATA, uint8_t CLOCK)
     CONTROL_PORT |= 1<<CLOCK;
 }
 
-
+/*
 void WF_flashy(void)
 {
     uint8_t i;
@@ -231,7 +229,7 @@ void WF_flashy(void)
             WF_tick(0, PA2, PA3);
         }
     }
-/*    for(i=100 ; i > 0 ; i--)
+    for(i=100 ; i > 0 ; i--)
     {
         for(k=1 ; k > 0 ; k--)
         {
@@ -247,7 +245,7 @@ void WF_flashy(void)
         }
         _delay_ms(1);
     }
-*/    for(i=2 ; i<120 ; i=(i*3)/2)
+    for(i=2 ; i<120 ; i=(i*3)/2)
     {
         WF_tick(1, PA1, PA2);
         WF_tick(1, PA2, PA3);
@@ -264,4 +262,4 @@ void WF_flashy(void)
 
     WF_clear();
 }
-
+*/

@@ -19,13 +19,14 @@ static uint8_t conv2d(const char* p)
 static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }
 static uint8_t bin2bcd (uint8_t val) { return val + 6 * (val / 10); }
 
+
+
 // reads in "the compiler's time":
 //   DateTime now (__TIME__);
-uint8_t RTC_init(const char* time) 
+DateTime RTC_convert(const char* time)
 {
     // sample input: time = "12:34:56"
     DateTime temptime;
-    uint8_t ret = 0;
 
     temptime.hour = conv2d(time);
     temptime.minute = conv2d(time + 3);
@@ -35,15 +36,23 @@ uint8_t RTC_init(const char* time)
     if (temptime.hour > 12)
         temptime.hour -= 12;
 
-    // Now write to RTC device.
+    if (temptime.hour == 0)
+        temptime.hour = 12;
 
-    RTC_UpdateTime(temptime);
+
+    return temptime;
+
+}
+
+// configures the RTC to operate how we want.
+uint8_t RTC_init() 
+{
+    uint8_t ret = 0;
 
     if ( i2c_start(I2CADDR+I2C_WRITE) )
     {
         /* failed to issue start condition, possibly no device found */
         i2c_stop();
-    //    SR_outputByte(ret);
         LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid start condition.
     }
     else
@@ -53,8 +62,19 @@ uint8_t RTC_init(const char* time)
         ret += i2c_write(0x40);                // Start outputting square wave.
         i2c_stop();
     }
-    // return 0 for success
-    // return error code for failure
+    if ( i2c_start(I2CADDR+I2C_WRITE) )
+    {
+        /* failed to issue start condition, possibly no device found */
+        i2c_stop();
+        LEDflashAlert();    // Flash an alert signal to indicate that we have an invalid start condition.
+    }
+    else
+    {
+        i2c_start_wait(I2CADDR+I2C_WRITE);     // set device address and write mode
+        ret = i2c_write(0x03);                 // write address = 3 (Battery control)
+        ret += i2c_write(0x03);                // Start outputting square wave.
+        i2c_stop();
+    }
 
     return ret;
 }
