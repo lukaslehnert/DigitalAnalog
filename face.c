@@ -106,6 +106,10 @@ void WF_displayTime(DateTime time)
     if (minticks>11)
         minticks=11;
 
+    hourticks = time.hour - 1;
+
+    if (hourticks>11)
+        hourticks=11;
 
 
     // Start by clearing the watch face:
@@ -143,7 +147,7 @@ void WF_displayTime(DateTime time)
     CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
     CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
     CONTROL_PORT &= ~(1<<HOUR_DATA);    // Hour data pin low. 
-    for( i = 1; i< time.hour ; i++)     // Now that we've loaded a bit into the SR, shift it over to
+    for( i = 0; i< hourticks ; i++)     // Now that we've loaded a bit into the SR, shift it over to
     {                                   // where we want it.
         CONTROL_PORT &= ~(1<<HOUR_CLOCK);
         _delay_ms(fancyness);
