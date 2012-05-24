@@ -15,7 +15,7 @@ volatile DateTime Time;
 ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes state)
 {   
     cli();      // disable interrupts while we handle the one that just happened
-
+    LEDon();
 
     // Which pin caused the interrupt?
     switch (PINB)
@@ -24,9 +24,6 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
         Time = RTC_GetTime();
         WF_displayTime(Time);
         // Handle any 1Hz tasks here
-        LEDon();
-        _delay_ms(1);
-        LEDoff();
         break;
     case 0b00000001: // if only PCINT9 (FF) is pressed (meaning PCINT8 is low and PCINT9 is high)
     case 0b00000101: // Also trigger if the MFP is high
@@ -70,15 +67,6 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 int main(void) {
 
     uint8_t lastcount = 0;
-    DateTime temptime;
-
-    LEDon();
-    _delay_ms(200);
-    LEDoff();
-    _delay_ms(100);
-    LEDon();
-    _delay_ms(200);
-    LEDoff();
 
 
     i2c_init();
@@ -88,9 +76,10 @@ int main(void) {
 
 
     // We only need these if there is no time currently stored in the RTC.  So, never.
-    //temptime = RTC_convert(__TIME__);
-    temptime = RTC_convert("12:10:00");
-    RTC_UpdateTime(temptime);
+    // DateTime temptime;
+    // temptime = RTC_convert(__TIME__);
+    // temptime = RTC_convert("12:10:00");
+    // RTC_UpdateTime(temptime);
 
     Time = RTC_GetTime();
     WF_displayTime(Time);
@@ -110,29 +99,8 @@ int main(void) {
     for(;;)
     {
         cli();      // disable interrupts while we do our house keeping
-        //Time = RTC_GetTime();
-        /*
-           _delay_ms(500);
 
-           if (counter > lastcount+1)
-           {
-           LEDflashSignal();
-
-           WF_displayTime(Time);
-        //    SR_outputByte(Time.minute);
-        //    _delay_ms(75);
-        //    SR_clear();
-        lastcount = counter;
-        }
-
-        if (counter >= 59) // There are 60 seconds in a minute, numbered 0-59.
-        {
-        Time = RTC_GetTime();
-        counter = Time.second;
-        lastcount = 0;
-        }
-        */
-
+        LEDoff();
         // SLEEP
         sei();         // enable all interrupts 
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
