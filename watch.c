@@ -43,18 +43,24 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
         break;
     case 0b00000010: // if only PCINT8 (RW) is pressed (meaning PCINT9 is low and PCINT8 is high)
     case 0b00000110: // Also trigger if the MFP is high
-        Time.minute--;
-        if(Time.minute < 0)
-        {
+        if(Time.minute == 0)
+        {   // Don't decrement if we're at 0, or we'll wrap around
             Time.minute = 59;
-            Time.hour--;
-            if ( Time.hour<0)
+            if(Time.hour == 0) // Don't decrement if we're at 0, or we'll wrap around
                 Time.hour = 11;
+            else
+                Time.hour--;
         }
+        else
+            Time.minute--;
+
         WF_displayTime(Time);
         RTC_UpdateTime(Time);
         break;
     }
+
+    while((PINB & 0b00000011) ^ 0b00000011)
+    ;   // Spin until the buttons are released.
 
     return; 
 } 
@@ -82,8 +88,9 @@ int main(void) {
 
 
     // We only need these if there is no time currently stored in the RTC.  So, never.
-    // temptime = RTC_convert(__TIME__);
-    // RTC_UpdateTime(temptime);
+    //temptime = RTC_convert(__TIME__);
+    temptime = RTC_convert("12:10:00");
+    RTC_UpdateTime(temptime);
 
     Time = RTC_GetTime();
     WF_displayTime(Time);

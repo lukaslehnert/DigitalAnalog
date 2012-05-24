@@ -32,14 +32,6 @@ DateTime RTC_convert(const char* time)
     temptime.minute = conv2d(time + 3);
     temptime.second = conv2d(time + 6);
 
-    // Time cleanup:
-    if (temptime.hour > 12)
-        temptime.hour -= 12;
-
-    if (temptime.hour == 0)
-        temptime.hour = 12;
-
-
     return temptime;
 
 }
