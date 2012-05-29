@@ -64,7 +64,7 @@ uint8_t RTC_init()
     {
         i2c_start_wait(I2CADDR+I2C_WRITE);     // set device address and write mode
         ret = i2c_write(0x03);                 // write address = 3 (Battery control)
-        ret += i2c_write(0x03);                // Start outputting square wave.
+        ret += i2c_write(0x08);                // Use battery backup
         i2c_stop();
     }
 
