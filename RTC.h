@@ -4,6 +4,8 @@
 
 #define I2CADDR 0xDE
 
+#ifndef RTC
+#define RTC
 
 typedef struct {
         uint8_t second;
@@ -12,8 +14,9 @@ typedef struct {
 
 } DateTime;
 
-uint8_t RTC_init (const char*);
+uint8_t RTC_init ();
+DateTime RTC_convert(const char*);
 uint8_t RTC_UpdateTime (DateTime);
 DateTime RTC_GetTime ();
 
-
+#endif
