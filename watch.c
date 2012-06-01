@@ -20,45 +20,52 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
     // Which pin caused the interrupt?
     switch (PINB)
     {
-    case 0b000000111:  // PCINT10 (MFP)
-        Time = RTC_GetTime();
-        WF_displayTime(Time);
-        // Handle any 1Hz tasks here
-        break;
-    case 0b00000001: // if only PCINT9 (FF) is pressed (meaning PCINT8 is low and PCINT9 is high)
-    case 0b00000101: // Also trigger if the MFP is high
-        Time.minute++;
-        if(Time.minute > 59)
-        {
-            Time.minute = 0;
-            Time.hour++;
-            if (Time.hour > 11)
-                Time.hour=0;
-        }
-        WF_displayTime(Time);
-        RTC_UpdateTime(Time);
-        break;
-    case 0b00000010: // if only PCINT8 (RW) is pressed (meaning PCINT9 is low and PCINT8 is high)
-    case 0b00000110: // Also trigger if the MFP is high
-        if(Time.minute == 0)
-        {   // Don't decrement if we're at 0, or we'll wrap around
-            Time.minute = 59;
-            if(Time.hour == 0) // Don't decrement if we're at 0, or we'll wrap around
-                Time.hour = 11;
-            else
-                Time.hour--;
-        }
-        else
-            Time.minute--;
+        case 0b000000111:  // PCINT10 (MFP)
+            Time = RTC_GetTime();
+            WF_displayTime(Time);
+            // Handle any 1Hz tasks here
+            break;
+        case 0b00000001: // if only PCINT9 (FF) is pressed (meaning PCINT8 is low and PCINT9 is high)
+        case 0b00000101: // Also trigger if the MFP is high
+            while((PINB & 0b00000011) ^ 0b00000011)
+            {   // Spin until the buttons are released.
+                Time.minute++;
+                if(Time.minute > 59)
+                {
+                    Time.minute = 0;
+                    Time.hour++;
+                    if (Time.hour > 11)
+                        Time.hour=0;
+                }
+                WF_displayTime(Time);
+                _delay_ms(100);
+            }    
+            break;
+        case 0b00000010: // if only PCINT8 (RW) is pressed (meaning PCINT9 is low and PCINT8 is high)
+        case 0b00000110: // Also trigger if the MFP is high
+            while((PINB & 0b00000011) ^ 0b00000011)
+            {   // Spin until the buttons are released.
+                if(Time.minute == 0)
+                {   // Don't decrement if we're at 0, or we'll wrap around
+                    Time.minute = 59;
+                    if(Time.hour == 0) // Don't decrement if we're at 0, or we'll wrap around
+                        Time.hour = 11;
+                    else
+                        Time.hour--;
+                }
+                else
+                    Time.minute--;
 
-        WF_displayTime(Time);
-        RTC_UpdateTime(Time);
-        break;
+                WF_displayTime(Time);
+                _delay_ms(100);
+            }
+            break;
     }
 
-    while((PINB & 0b00000011) ^ 0b00000011)
-    ;   // Spin until the buttons are released.
 
+
+
+    RTC_UpdateTime(Time);
     return; 
 } 
 
