@@ -17,11 +17,13 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
     cli();      // disable interrupts while we handle the one that just happened
     LEDon();
 
+    Time = RTC_GetTime();
+
+
     // Which pin caused the interrupt?
     switch (PINB)
     {
         case 0b000000111:  // PCINT10 (MFP)
-            Time = RTC_GetTime();
             WF_displayTime(Time);
             // Handle any 1Hz tasks here
             break;
@@ -40,6 +42,7 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
                 WF_displayTime(Time);
                 _delay_ms(100);
             }    
+            RTC_UpdateTime(Time);
             break;
         case 0b00000010: // if only PCINT8 (RW) is pressed (meaning PCINT9 is low and PCINT8 is high)
         case 0b00000110: // Also trigger if the MFP is high
@@ -59,13 +62,13 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
                 WF_displayTime(Time);
                 _delay_ms(100);
             }
+            RTC_UpdateTime(Time);
             break;
     }
 
 
 
 
-    RTC_UpdateTime(Time);
     return; 
 } 
 
