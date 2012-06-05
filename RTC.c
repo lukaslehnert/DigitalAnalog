@@ -133,7 +133,7 @@ DateTime RTC_GetTime ()
         i2c_rep_start(I2CADDR+I2C_READ);            // set device address and read mode
         temptime.second = bcd2bin(i2c_readAck() & 0b01111111);   // read one byte form address 0
         temptime.minute = bcd2bin(i2c_readAck());   // read one byte form address 0
-        temptime.hour = bcd2bin(i2c_readNak() & 0b000111111);     // read one byte form address 0
+        temptime.hour = bcd2bin(i2c_readNak() & 0b00011111);     // read one byte form address 0
         i2c_stop();                                 // set stop condition = release bus
     }
     

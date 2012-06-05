@@ -71,6 +71,7 @@ void WF_allOn(void)
 
 void WF_displayTime(DateTime time)
 {
+    LEDon();
     //time.minute
     //time.hour
 
@@ -106,10 +107,43 @@ void WF_displayTime(DateTime time)
     if (minticks>11)
         minticks=11;
 
-    hourticks = time.hour - 1;
-
-    if (hourticks>11)
-        hourticks=11;
+    switch(time.hour)
+    {
+        case 0:
+            hourticks = 11;
+            break;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+        case 11:
+        case 12:
+                hourticks = time.hour - 1;
+                break;
+        case 13:
+        case 14:
+        case 15:
+        case 16:
+        case 17:
+        case 18:
+        case 19:
+        case 20:
+        case 21:
+        case 22:
+        case 23:
+                    hourticks = time.hour - 13;
+                    break;
+        default:
+                        LEDflashAlert();
+                        hourticks=11;
+                        break;
+    }
 
 
     // Start by clearing the watch face:
@@ -134,13 +168,13 @@ void WF_displayTime(DateTime time)
     }
 
     if(wraparound)  // Right at the top of the hour,
-    {                                   // we have to shift the first LED all the way around, 
-                                        // then add the second one
-        CONTROL_PORT |= 1<<MIN_DATA;        // Minute data pin high
-        CONTROL_PORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
-        CONTROL_PORT |= 1<<MIN_CLOCK;       // Minute clock pin low
-        CONTROL_PORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
-    }
+        {                                   // we have to shift the first LED all the way around, 
+            // then add the second one
+            CONTROL_PORT |= 1<<MIN_DATA;        // Minute data pin high
+            CONTROL_PORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
+            CONTROL_PORT |= 1<<MIN_CLOCK;       // Minute clock pin low
+            CONTROL_PORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
+        }
 
     // Now set the hours:
     CONTROL_PORT |= 1<<HOUR_DATA;       // Hour data pin high
@@ -154,8 +188,7 @@ void WF_displayTime(DateTime time)
         CONTROL_PORT |= 1<<HOUR_CLOCK;
     }
 
-
-
+    LEDoff();
 }
 
 /*
@@ -226,7 +259,6 @@ LEDflashSignal();
 }
 
 
-*/
 
 void WF_tick(_Bool ZeroOrOne, uint8_t DATA, uint8_t CLOCK)
 {
@@ -239,7 +271,6 @@ void WF_tick(_Bool ZeroOrOne, uint8_t DATA, uint8_t CLOCK)
     CONTROL_PORT |= 1<<CLOCK;
 }
 
-/*
    void WF_flashy(void)
    {
    uint8_t i;
