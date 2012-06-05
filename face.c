@@ -71,6 +71,7 @@ void WF_allOn(void)
 
 void WF_displayTime(DateTime time)
 {
+    LEDon();
     //time.minute
     //time.hour
 
@@ -187,8 +188,7 @@ void WF_displayTime(DateTime time)
         CONTROL_PORT |= 1<<HOUR_CLOCK;
     }
 
-
-
+    LEDoff();
 }
 
 /*
