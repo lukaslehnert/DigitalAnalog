@@ -15,7 +15,6 @@ volatile DateTime Time;
 ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes state)
 {   
     cli();      // disable interrupts while we handle the one that just happened
-    LEDon();
 
     // Which pin caused the interrupt?
     switch (PINB)
@@ -67,8 +66,6 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
     }
 
 
-
-
     return; 
 } 
 
@@ -108,7 +105,6 @@ int main(void) {
     {
         cli();      // disable interrupts while we do our house keeping
 
-        LEDoff();
         // SLEEP
         sei();         // enable all interrupts 
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
