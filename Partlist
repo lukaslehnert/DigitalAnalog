@@ -1,0 +1,78 @@
+Part	    Value           Vendor          Part Number	
+
+BAT1                        all-battery     ???
+C1	    12pF	    digi	
+C2          12pF            digi
+C3	    10uF            digi
+C4	    10uF            digi
+C5	    EIA3528-KIT     digi
+C6                          digi
+C7	    10uF            digi
+C8	    10uF            digi
+CHARGE	    Orange	    digi
+D1	    SOD80C          digi
+D2          SOD80C          digi
+G1	    RCR123A CR2/3   digi
+IC1	    TINY/84-SSU     digi
+IC2	    X1205IS8        digi
+IC3	    SO24L           digi
+IC4	    SO24L           digi
+IC7	    SOT23-5         digi
+JP1	    1X06            digi
+JP2	    1X06            digi
+JP3	    1X06            digi
+JP4	    1X06            digi       
+JP5	    1X06            digi        
+JP6	    1X06            digi
+JP7	    1X06            digi         
+JP8	    1X06            digi          
+JP9	    M01PTH	    digi
+JP10	    M01PTH	    digi
+JP11	    M01PTH	    digi
+JP12	    M01PTH	    digi
+JP13	    M01PTH	    digi    
+JP14	    M01PTH	    digi     
+JP15	    1X06-SMD        digi
+L1	    B82462G	    digi      
+LEDHOUR1                    digi
+LEDHOUR2                    digi       
+LEDHOUR3                    digi
+LEDHOUR4                    digi        
+LEDHOUR5                    digi         
+LEDHOUR6                    digi
+LEDHOUR7                    digi          
+LEDHOUR8                    digi           
+LEDHOUR9                    digi
+LEDHOUR1                    digi
+LEDHOUR11                   digi  
+LEDHOUR12                   digi   
+LEDMIN5                     digi
+LEDMIN10                    digi    
+LEDMIN15                    digi     
+LEDMIN20                    digi
+LEDMIN25                    digi
+LEDMIN30                    digi      
+LEDMIN35                    digi       
+LEDMIN40                    digi
+LEDMIN45                    digi        
+LEDMIN50                    digi         
+LEDMIN55                    digi
+LEDMIN60                    digi          
+LEDSEC1	                    digi  
+LEDSTATUS                   digi
+PROGCHARGE	4.7k	    digi   
+Q1	        crystal	    digi    
+R1	        PC25	    digi
+R2	        PC25        digi     
+RCHARGE	        1170        digi
+RPULLUP1	4.7K        digi      
+RPULLUP2	4.7K        digi
+RPULLUP3	4.7K        digi       
+RPULLUP4	4.7K        digi        
+RSEC	        460         digi
+RSTATUS	        460         digi 
+S1	        SWITCH-MOM  digi
+S2	        SWITCH-MOM  digi
+S3      	SWITCH-SPST digi
+U1	        MCP73831    digi 
+X1	        USB-MICROB  digi

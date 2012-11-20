@@ -16,9 +16,12 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 {   
     cli();      // disable interrupts while we handle the one that just happened
 
+
+
     // Which pin caused the interrupt?
     switch (PINB)
     {
+
         case 0b000000111:  // PCINT10 (MFP)
             Time = RTC_GetTime();
             WF_displayTime(Time);
@@ -71,7 +74,8 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 
 
 
-int main(void) {
+int main(void)
+{
 
 
     i2c_init();
