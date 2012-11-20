@@ -1,0 +1,84 @@
+Part	    Value           Vendor          Part Number	    
+
+MAIN
+BAT1        COIN 3V 12.5MM  digi            SY033-ND
+C1	    12pF	    digi	    478-1305-1-ND   
+C2          12pF            digi            478-1305-1-ND   
+C3	    10uF            digi            311-1355-1-ND
+C4	    10uF            digi            311-1355-1-ND
+C5	    68uF            digi            493-4125-1-ND
+C6          10uF            digi            311-1355-1-ND
+C7	    10uF            digi            311-1355-1-ND
+C8	    10uF            digi            311-1355-1-ND
+IC1	    ATTINY/84-SSU   digi            ATTINY84A-SSURCT-ND
+IC2	    MCP7940         digi            MCP79400-I/SN-ND
+IC3	    TLC5925         digi            296-24465-1-ND
+IC4	    TLC5925         digi            296-24465-1-ND
+IC7	    NCP1400ASN50T1G digi            NCP1400ASN50T1GOSCT-ND
+JP1	    1X06            digi
+JP2	    1X06            digi
+JP3	    1X06            digi
+JP4	    1X06            digi       
+JP5	    1X06            digi        
+JP6	    1X06            digi
+JP7	    1X06            digi         
+JP8	    1X06            digi          
+JP9	    1x01	    digi
+JP10	    1x01	    digi
+JP11	    1x01	    digi
+JP12	    1x01	    digi
+JP13	    1x01	    digi    
+JP14	    1x01	    digi     
+L1	    27UH	    digi            SDR0703-270KLCT-ND
+LEDSTATUS   RED             digi            475-1278-1-ND
+Q1	    32.768kHz	    digi            535-9166-1-ND
+R1	    0-3k	    digi            490-2038-1-ND
+R2	    0-3k            digi            490-2038-1-ND
+RCHARGE	    1170            digi
+RPULLUP1	4.7K        digi      
+RPULLUP2	4.7K        digi
+RPULLUP3	4.7K        digi       
+RPULLUP4	4.7K        digi        
+RSTATUS	        460         digi 
+S1	        SWITCH-MOM  digi
+S2	        SWITCH-MOM  digi
+S3      	SWITCH-SPST digi
+X1	        USB-MICROB  digi
+
+
+BATTERY MODULE
+U1	    MCP73831        digi            MCP73831T-2ACI/OTCT-ND
+CHARGE	    Orange	    digi            754-1096-1-ND   
+D1	    SCHOTTKY 30V 1A digi            DFLS130LDICT-ND 
+G1	    RCR123A Holder  digi            BH123A-ND
+PROGCHARGE  4.7k	    digi   
+BAT2        RCR123A         all-battery     ???
+
+
+FACE
+LEDHOUR1    GREEN           digi            754-1094-1-ND
+LEDHOUR2    GREEN           digi            754-1094-1-ND
+LEDHOUR3    GREEN           digi            754-1094-1-ND
+LEDHOUR4    GREEN           digi            754-1094-1-ND
+LEDHOUR5    GREEN           digi            754-1094-1-ND
+LEDHOUR6    GREEN           digi            754-1094-1-ND
+LEDHOUR7    GREEN           digi            754-1094-1-ND
+LEDHOUR8    GREEN           digi            754-1094-1-ND
+LEDHOUR9    GREEN           digi            754-1094-1-ND
+LEDHOUR1    GREEN           digi            754-1094-1-ND
+LEDHOUR11   GREEN           digi            754-1094-1-ND
+LEDHOUR12   GREEN           digi            754-1094-1-ND
+LEDMIN5     BLUE            digi            754-1505-1-ND
+LEDMIN10    BLUE            digi            754-1505-1-ND
+LEDMIN15    BLUE            digi            754-1505-1-ND
+LEDMIN20    BLUE            digi            754-1505-1-ND
+LEDMIN25    BLUE            digi            754-1505-1-ND
+LEDMIN30    BLUE            digi            754-1505-1-ND
+LEDMIN35    BLUE            digi            754-1505-1-ND
+LEDMIN40    BLUE            digi            754-1505-1-ND
+LEDMIN45    BLUE            digi            754-1505-1-ND
+LEDMIN50    BLUE            digi            754-1505-1-ND
+LEDMIN55    BLUE            digi            754-1505-1-ND
+LEDMIN60    BLUE            digi            754-1505-1-ND
+LEDSEC1	    RED             digi        
+RSEC	        460         digi
