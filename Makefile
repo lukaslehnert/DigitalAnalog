@@ -35,14 +35,26 @@ all: $(TARGET).hex
 flash: $(TARGET).hex
 	$(AVRDUDE) -p $(AVRDUDE_DEVICE) -c $(PROGRAMMER) -P $(PORT) -U flash:w:$(TARGET).hex
 
+pcbmerge: pcb/gerbers/battery.toplayer.ger  pcb/gerbers/face.toplayer.ger  pcb/gerbers/main.toplayer.ger
+	cd pcb/gerbers; gerbmerge --rs-fsjobs=2 --search-timeout=4 gerbmerge.cfg
+
+pcbpack: pcb/gerbers/battery.toplayer.ger  pcb/gerbers/face.toplayer.ger  pcb/gerbers/main.toplayer.ger
+	cd pcb/gerbers; zip battery.zip battery.*
+	cd pcb/gerbers; zip face.zip face.*
+	cd pcb/gerbers; zip main.zip main.*
+
 clean:
 	rm -f *.o 
 	rm -f *.hex 
 	rm -f *.obj 
 	rm -f pcb/*.[bs]\#[0-9] 
 	rm -f pcb/merged.* 
+	-mv pcb/*.ger pcb/gerbers/
+	-mv pcb/*.xln pcb/gerbers/
 	rm -f pcb/*.gpi 
 	rm -f pcb/*.drills.dri
+	rm -f pcb/gerbers/merged.*
+	rm -f pcb/gerbers/*.zip
 
 
 test1.o: test1.cc
