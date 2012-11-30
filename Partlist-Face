@@ -1,0 +1,37 @@
+Partlist
+
+Exported from face.sch at 11/29/12 10:35 PM
+
+EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
+
+Part      Value          Device           Package      Library  Sheet
+
+JP1                      M031X03_NO_SILK  1X03_NO_SILK SparkFun 1
+JP2                      PINHD-2X6        2X06         RyanK    1
+JP3                      PINHD-2X6        2X06         RyanK    1
+LEDHOUR1                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR2                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR3                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR4                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR5                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR6                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR7                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR8                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR9                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR10                LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR11                LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDHOUR12                LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN5                  LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN10                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN15                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN20                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN25                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN30                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN35                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN40                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN45                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN50                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN55                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDMIN60                 LEDCHIPLED_0805  CHIPLED_0805 led      1
+LEDSEC1                  LEDCHIPLED_0805  CHIPLED_0805 led      1
+RSEC      460            RESISTOR0805-RES 0805         SparkFun 1
