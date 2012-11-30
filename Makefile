@@ -49,7 +49,6 @@ clean:
 	rm -f *.hex 
 	rm -f *.obj 
 	rm -f pcb/*.[bs]\#[0-9] 
-	rm -f pcb/merged.* 
 	-mv pcb/*.ger pcb/gerbers/
 	-mv pcb/*.xln pcb/gerbers/
 	rm -f pcb/*.gpi 
