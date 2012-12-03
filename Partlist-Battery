@@ -1,16 +1,16 @@
 Partlist
 
-Exported from battery.sch at 11/29/12 10:35 PM
+Exported from battery.brd at 12/2/12 9:38 PM
 
 EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
 
-Part       Value          Device           Package      Library  Sheet
+Part       Value          Package      Library  Position (inch)       Orientation
 
-C7         10uF           CAP0805          0805         SparkFun 1
-C8         10uF           CAP0805          0805         SparkFun 1
-CHARGE     Orange         LEDCHIPLED_0805  CHIPLED_0805 led      1
-D2                        DIODE-SOD80C     SOD80C       diode    1
-G1         RCR123A        RCR123A          CR2/3        RyanK    1
-PROGCHARGE 4.7k           RESISTOR0805-RES 0805         SparkFun 1
-RCHARGE    1170           RESISTOR0805-RES 0805         SparkFun 1
-U1         MCP73831       MCP73831         SOT23-5      SparkFun 1
+C7         10uF           0805         SparkFun (0.915 0.175)         R180
+C8         10uF           0805         SparkFun (0.715 0.175)         R0
+CHARGE     Orange         CHIPLED_0805 led      (0.52 0.275)          R270
+D2                        SOD80C       diode    (0.915 0.275)         R180
+G1         RCR123A        CR2/3        RyanK    (0.815 0.69)          R0
+PROGCHARGE 4.7k           0805         SparkFun (0.715 0.275)         R180
+RCHARGE    1170           0805         SparkFun (0.52 0.175)          R0
+U1         MCP73831       SOT23-5      SparkFun (0.815 0.69)          MR180
