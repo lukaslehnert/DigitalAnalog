@@ -3,7 +3,7 @@
 #define CONTROL_PORT    PORTA
 #define CONTROL_DDR     DDRA
 #define DATA_PIN        PA2
-#define CLOCK_PIN       PA3
+#define CLOCK_PIN       PA4
 
 uint8_t clock_noop = 0;
 
