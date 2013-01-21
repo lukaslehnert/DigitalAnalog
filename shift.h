@@ -9,3 +9,6 @@ void SR_push1(uint8_t, uint8_t);  // Push a 1 to the SR
 void SR_tick(uint8_t);
 void SR_clear(uint8_t, uint8_t);
 void SR_flashy(void);
+void SR_bargraph(int value);
+void SR_bytegraph(int value);
+

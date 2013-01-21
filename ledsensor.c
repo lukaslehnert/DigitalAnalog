@@ -35,44 +35,18 @@
 // rate gets too long in the dark and it flickers disturbingly.)
 
 
+/* Comment courtesy of Arduino project.  
+ * I've used their code as a basis for my own,
+ * porting to to pure AVR C in the process. */
+
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include "shift.h"
+#include "pindefs.h"
 
 
-#define bit_get(p,m) ((p) & (m)) 
-#define BIT(x) (0x01 << (x)) 
-
-#define POS PA1
-#define NEG PA0
-
-
-void bargraph(int value)
-{
-    int i;
-    for (i=8; i>0; i--)
-        SR_push0(PA2, PA4);
-
-    for (value=value; value>0; value--)
-        SR_push1(PA2, PA4);
-}
-
-void bytegraph(int value)
-{
-    int i;
-
-    for (i=8; i>0; i--)
-    {
-        if ( (0b10000000 & value) == 0b10000000)
-            SR_push1(PA2, PA4);
-        else
-            SR_push0(PA2, PA4);
-        value = value << 1;
-    }
-}
-
-
-int read_LED ()
+int LLS_read_LED ()
 {
     unsigned int j;
     unsigned int mask, notmask;
@@ -83,33 +57,24 @@ int read_LED ()
 
 
     //Apply reverse voltage, charge up the pin and led capacitance
-    ///pinMode(LED_N_SIDE,OUTPUT);
     DDRA |= 1<<NEG;
-    ///pinMode(LED_P_SIDE,OUTPUT);
     DDRA |= 1<<POS;
-    ///digitalWrite(LED_N_SIDE,HIGH);
     PORTA |= 1<<NEG;
-    ///digitalWrite(LED_P_SIDE,LOW);
     PORTA &= ~(1<<POS);
-
-    _delay_ms(100);
+    _delay_ms(50);
 
     // Isolate the pin 2 end of the diode
-    ///pinMode(LED_N_SIDE,INPUT);
     DDRA &= notmask;
-    ///digitalWrite(LED_N_SIDE,LOW);  // turn off internal pull-up resistor
     PORTA &= notmask;
 
     // Count how long it takes the diode to bleed back down to a logic zero
     for ( j = 0; j < 254; j++) 
     {
         if ( (PINA & mask) == 0) 
-        {
             return j;
-        }
+
         _delay_ms(2);
     }
-
 
     return 255;
 }
@@ -117,18 +82,30 @@ int read_LED ()
 
 int main()
 {
-    unsigned int value;
+    unsigned int i, j;
+    unsigned int values[5];
+    unsigned long int value;
+
 
     DDRA |= 1<<PA2;     // Set data pin to output
     DDRA |= 1<<PA4;    // Set data pin to output
 
+    
+    for (i=0; i<5; i++)
+        values[i] = 254;
+
 
     while (1 == 1)
     {
-        value = read_LED();
+        values[i%5] = LLS_read_LED();
+        i++;
+            
+        value = 0;
+        for (j=0; j<5; j++)
+            value += values[j];
+        value = value / 5;
 
-        bargraph(8-(value/32));
-        //_delay_ms(5000);
+        SR_bargraph(8-(value/32));
         
 
     }
