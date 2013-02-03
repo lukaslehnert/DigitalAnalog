@@ -40,10 +40,7 @@
  * porting to to pure AVR C in the process. */
 
 
-#include <avr/io.h>
-#include <util/delay.h>
-#include "shift.h"
-#include "pindefs.h"
+#include "LEDsensor.h"
 
 
 int LLS_read_LED ()
@@ -80,6 +77,9 @@ int LLS_read_LED ()
 }
 
 
+// suggested usage:
+
+/*
 int main()
 {
     unsigned int i, j;
@@ -110,3 +110,6 @@ int main()
 
     }
 }
+
+*/
+
