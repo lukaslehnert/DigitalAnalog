@@ -3,9 +3,37 @@
 #define CONTROL_PORT    PORTA
 #define CONTROL_DDR     DDRA
 #define DATA_PIN        PA2
-#define CLOCK_PIN       PA3
+#define CLOCK_PIN       PA4
 
 uint8_t clock_noop = 0;
+
+
+
+void SR_bargraph(int value)
+{
+    int i;
+    for (i=8; i>0; i--)
+        SR_push0(PA2, PA4);
+
+    for (value=value; value>0; value--)
+        SR_push1(PA2, PA4);
+}
+
+
+
+void SR_bytegraph(int value)
+{
+    int i;
+
+    for (i=8; i>0; i--)
+    {
+        if ( (0b10000000 & value) == 0b10000000)
+            SR_push1(PA2, PA4);
+        else
+            SR_push0(PA2, PA4);
+        value = value << 1;
+    }
+}
 
 
 

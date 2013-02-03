@@ -5,3 +5,6 @@
 
 #define DDR_USI DDRA
 #define PIN_USI PINA
+
+#define POS PA1
+#define NEG PA0
