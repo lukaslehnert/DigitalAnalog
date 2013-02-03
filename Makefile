@@ -1,6 +1,6 @@
-DEVICE = attiny24a
+DEVICE = attiny84
 F_CPU = 8000000
-AVRDUDE_DEVICE = attiny24
+AVRDUDE_DEVICE = attiny84
 PORT = /dev/ttyS0
 AVRDUDE = avrdude
 PROGRAMMER = usbasp
