@@ -1,5 +1,9 @@
-DEVICE = attiny24a
+DEVICE = attiny84
 F_CPU = 8000000
+AVRDUDE_DEVICE = attiny84
+PORT = /dev/ttyS0
+AVRDUDE = avrdude
+PROGRAMMER = usbasp
 
 CFLAGS = -g -Wall -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -mcall-prologues -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 #CFLAGS = -g -Wall -mcall-prologues -mmcu=$(DEVICE) -Os -DF_CPU=$(F_CPU)UL -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
@@ -28,8 +32,30 @@ all: $(TARGET).hex
 .S.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
+flash: $(TARGET).hex
+	$(AVRDUDE) -p $(AVRDUDE_DEVICE) -c $(PROGRAMMER) -P $(PORT) -U flash:w:$(TARGET).hex
+
+pcbmerge: pcb/gerbers/battery.toplayer.ger  pcb/gerbers/face.toplayer.ger  pcb/gerbers/main.toplayer.ger
+	cd pcb/gerbers; yes | gerbmerge --rs-fsjobs=2 --search-timeout=4 gerbmerge.cfg
+
+pcbpack: pcb/gerbers/battery.toplayer.ger  pcb/gerbers/face.toplayer.ger  pcb/gerbers/main.toplayer.ger
+	cd pcb/gerbers; zip battery.zip battery.*
+	cd pcb/gerbers; zip face.zip face.*
+	cd pcb/gerbers; zip main.zip main.*
+	cd pcb/gerbers; zip merged.zip merged.*
+
 clean:
-	rm -f *.o *.hex *.obj pcb/*.[bs]\#[0-9] pcb/merged.* pcb/*.ger pcb/*.gpi pcb/watch.drills.*
+	rm -f *.o 
+	rm -f *.hex 
+	rm -f *.obj 
+	rm -f pcb/*.[bs]\#[0-9] 
+	-mv pcb/*.ger pcb/gerbers/
+	-mv pcb/*.xln pcb/gerbers/
+	rm -f pcb/*.gpi 
+	rm -f pcb/*.drills.dri
+	rm -f pcb/gerbers/merged.*
+	rm -f pcb/gerbers/*.zip
+
 
 test1.o: test1.cc
 
@@ -44,10 +70,3 @@ test1.o: test1.cc
 %.obj: $(OBJECT_FILES)
 	$(CC) $(CFLAGS) $(OBJECT_FILES) $(LDFLAGS) -o $@
 
-AVRDUDE_DEVICE = attiny24
-PORT = /dev/ttyS0
-AVRDUDE = avrdude
-PROGRAMMER = usbasp
-
-flash: $(TARGET).hex
-	$(AVRDUDE) -p $(AVRDUDE_DEVICE) -c $(PROGRAMMER) -P $(PORT) -U flash:w:$(TARGET).hex
