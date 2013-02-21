@@ -1,5 +1,5 @@
 DEVICE = attiny84
-F_CPU = 8000000
+F_CPU = 1000000
 AVRDUDE_DEVICE = attiny84
 PORT = /dev/ttyS0
 AVRDUDE = avrdude
