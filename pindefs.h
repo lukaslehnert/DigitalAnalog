@@ -8,3 +8,6 @@
 
 #define POS PA1
 #define NEG PA0
+
+#define STATUSLED PA7
+#define STATUSVCC PA5

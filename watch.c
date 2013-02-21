@@ -12,6 +12,8 @@
 volatile uint8_t counter;   // Declare volatile to prevent GCC from optimizing it out.
 volatile DateTime Time;
 
+/*
+
 ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes state)
 {   
     cli();      // disable interrupts while we handle the one that just happened
@@ -72,10 +74,17 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
     return; 
 } 
 
+*/
 
 
 int main(void)
 {
+
+
+    for(;;)
+    {
+        LEDflashAlert();
+    }
 
 
     i2c_init();
@@ -90,7 +99,6 @@ int main(void)
     // temptime = RTC_convert("12:10:00");
     // RTC_UpdateTime(temptime);
 
-    Time = RTC_GetTime();
     WF_displayTime(Time);
 
     // Setup interrupts
