@@ -3,22 +3,46 @@
 #include "RTC.h"
 #include "LEDstatus.h"
 
-#define CONTROL_PORT    PORTA
-#define CONTROL_DDR     DDRA
+#define FACEPORT       PORTA
+#define FACEIOPORT     DDRA
 
-#define MIN_DATA        PA2
-#define MIN_CLOCK       PA3
-#define HOUR_DATA       PA1
-#define HOUR_CLOCK      PA2  // Why did I do this?  I don't know.  It made sense at the time.
+#define MIN_DATA        PA3
+#define HOUR_DATA       PA3
+#define DATA            PA3
+#define HOUR_CLOCK      PA2
+#define MIN_CLOCK       PA0
+
+#define CONTROLPORT     PORTB
+#define CONTROLIOPORT   DDRB
+#define CONTROLPIN      PB2
 
 void WF_init(void)
 {
-    CONTROL_DDR |= 1<<MIN_DATA;     // Set data pin to output
-    CONTROL_DDR |= 1<<HOUR_DATA;    // Set data pin to output
-    CONTROL_DDR |= 1<<MIN_CLOCK;    // Set data pin to output
-    CONTROL_DDR |= 1<<HOUR_CLOCK;    // Set data pin to output
+    FACEIOPORT |= 1<<MIN_DATA;     // Set data pin to output
+    FACEIOPORT |= 1<<HOUR_DATA;    // Set data pin to output
+    FACEIOPORT |= 1<<MIN_CLOCK;    // Set data pin to output
+    FACEIOPORT |= 1<<HOUR_CLOCK;    // Set data pin to output
 
     WF_clear();
+}
+
+
+
+void WF_enable()
+{
+
+    CONTROLIOPORT |= 1<<CONTROLPIN;
+    CONTROLPORT |= CONTROLPIN;
+
+}
+
+
+
+void WF_disable()
+{
+
+
+
 }
 
 
@@ -26,19 +50,19 @@ void WF_init(void)
 void WF_clear(void)
 {
     uint8_t i;
-    CONTROL_PORT &= ~(1<<MIN_DATA);
-    CONTROL_PORT &= ~(1<<HOUR_DATA);
+    FACEPORT &= ~(1<<MIN_DATA);
+    FACEPORT &= ~(1<<HOUR_DATA);
 
     for( i=0 ; i<16 ; i++)
     {
-        CONTROL_PORT |= 1<<MIN_CLOCK;       // Minute clock pin low
-        CONTROL_PORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
+        FACEPORT |= 1<<MIN_CLOCK;       // Minute clock pin low
+        FACEPORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
     }
 
     for( i=0 ; i<16 ; i++)
     {
-        CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
-        CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
+        FACEPORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
+        FACEPORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
     }
 
 }
@@ -47,22 +71,22 @@ void WF_clear(void)
 void WF_allOn(void)
 {
     uint8_t i;
-    CONTROL_PORT |= 1<<MIN_DATA;
-    CONTROL_PORT |= 1<<HOUR_DATA;
+    FACEPORT |= 1<<MIN_DATA;
+    FACEPORT |= 1<<HOUR_DATA;
 
     for( i=0 ; i<16 ; i++)
     {
-        CONTROL_PORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
+        FACEPORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
         // might need delays here.
-        CONTROL_PORT |= 1<<MIN_CLOCK;       // Minute clock pin low
+        FACEPORT |= 1<<MIN_CLOCK;       // Minute clock pin low
     }
-    CONTROL_PORT |= 1<<HOUR_DATA;
+    FACEPORT |= 1<<HOUR_DATA;
 
     for( i=0 ; i<16 ; i++)
     {
-        CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
+        FACEPORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
         // might need delays here.
-        CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
+        FACEPORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
     }
 
 }
@@ -124,8 +148,8 @@ void WF_displayTime(DateTime time)
         case 10:
         case 11:
         case 12:
-                hourticks = time.hour - 1;
-                break;
+            hourticks = time.hour - 1;
+            break;
         case 13:
         case 14:
         case 15:
@@ -137,12 +161,12 @@ void WF_displayTime(DateTime time)
         case 21:
         case 22:
         case 23:
-                    hourticks = time.hour - 13;
-                    break;
+            hourticks = time.hour - 13;
+            break;
         default:
-                        LEDflashAlert();
-                        hourticks=11;
-                        break;
+            LEDflashAlert();
+            hourticks=11;
+            break;
     }
 
 
@@ -152,40 +176,40 @@ void WF_displayTime(DateTime time)
     // We have to set the minutes first, then the hours.
     for(i=0; i<1+extralight; i++) // shift in the correct number of lights
     {
-        CONTROL_PORT |= 1<<MIN_DATA;        // Minute data pin high
-        CONTROL_PORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
-        CONTROL_PORT |= 1<<MIN_CLOCK;       // Minute clock pin low
-        CONTROL_PORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
+        FACEPORT |= 1<<MIN_DATA;        // Minute data pin high
+        FACEPORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
+        FACEPORT |= 1<<MIN_CLOCK;       // Minute clock pin low
+        FACEPORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
     }
 
     for( i = 0; i < minticks-wraparound ; i++) // Now that we've loaded a bit into the SR, shift it over to
     {                                   // where we want it.
-        CONTROL_PORT &= ~(1<<MIN_CLOCK);
-        CONTROL_PORT &= ~(1<<HOUR_CLOCK);
+        FACEPORT &= ~(1<<MIN_CLOCK);
+        FACEPORT &= ~(1<<HOUR_CLOCK);
         _delay_ms(fancyness);
-        CONTROL_PORT |= 1<<MIN_CLOCK;
-        CONTROL_PORT |= 1<<HOUR_CLOCK;
+        FACEPORT |= 1<<MIN_CLOCK;
+        FACEPORT |= 1<<HOUR_CLOCK;
     }
 
     if(wraparound)  // Right at the top of the hour,
         {                                   // we have to shift the first LED all the way around, 
             // then add the second one
-            CONTROL_PORT |= 1<<MIN_DATA;        // Minute data pin high
-            CONTROL_PORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
-            CONTROL_PORT |= 1<<MIN_CLOCK;       // Minute clock pin low
-            CONTROL_PORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
+            FACEPORT |= 1<<MIN_DATA;        // Minute data pin high
+            FACEPORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
+            FACEPORT |= 1<<MIN_CLOCK;       // Minute clock pin low
+            FACEPORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
         }
 
     // Now set the hours:
-    CONTROL_PORT |= 1<<HOUR_DATA;       // Hour data pin high
-    CONTROL_PORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
-    CONTROL_PORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
-    CONTROL_PORT &= ~(1<<HOUR_DATA);    // Hour data pin low. 
+    FACEPORT |= 1<<HOUR_DATA;       // Hour data pin high
+    FACEPORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
+    FACEPORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
+    FACEPORT &= ~(1<<HOUR_DATA);    // Hour data pin low. 
     for( i = 0; i< hourticks ; i++)     // Now that we've loaded a bit into the SR, shift it over to
     {                                   // where we want it.
-        CONTROL_PORT &= ~(1<<HOUR_CLOCK);
+        FACEPORT &= ~(1<<HOUR_CLOCK);
         _delay_ms(fancyness);
-        CONTROL_PORT |= 1<<HOUR_CLOCK;
+        FACEPORT |= 1<<HOUR_CLOCK;
     }
 
     LEDoff();
@@ -216,36 +240,36 @@ void WF_displayTime(DateTime time)
    {
    LEDflashSignal();
 // Set the new minute bit
-CONTROL_PORT |= 1<<MIN_DATA;
+FACEPORT |= 1<<MIN_DATA;
 _delay_ms(2);
-CONTROL_PORT &= ~(1<<MIN_CLOCK);
+FACEPORT &= ~(1<<MIN_CLOCK);
 _delay_ms(2);        // might need delays here.
-CONTROL_PORT |= 1<<MIN_CLOCK;
+FACEPORT |= 1<<MIN_CLOCK;
 }
 else
 {
-CONTROL_PORT &= ~(1<<MIN_DATA);
+FACEPORT &= ~(1<<MIN_DATA);
 _delay_ms(2);
-CONTROL_PORT &= ~(1<<MIN_CLOCK);
+FACEPORT &= ~(1<<MIN_CLOCK);
 _delay_ms(2);
-CONTROL_PORT |= 1<<MIN_CLOCK;
+FACEPORT |= 1<<MIN_CLOCK;
 }
 
 if (hour == 1)
 {
-CONTROL_PORT |= 1<<HOUR_DATA;
+FACEPORT |= 1<<HOUR_DATA;
 _delay_ms(2);
-CONTROL_PORT &= ~(1<<HOUR_CLOCK);
+FACEPORT &= ~(1<<HOUR_CLOCK);
 _delay_ms(2);        // might need delays here.
-CONTROL_PORT |= 1<<HOUR_CLOCK;
+FACEPORT |= 1<<HOUR_CLOCK;
 }
 else
 {
-CONTROL_PORT &= ~(1<<HOUR_DATA);
+FACEPORT &= ~(1<<HOUR_DATA);
 _delay_ms(2);
-CONTROL_PORT &= ~(1<<HOUR_CLOCK);
+FACEPORT &= ~(1<<HOUR_CLOCK);
 _delay_ms(2);
-CONTROL_PORT |= 1<<HOUR_CLOCK;
+FACEPORT |= 1<<HOUR_CLOCK;
 }
 
 
@@ -259,69 +283,71 @@ LEDflashSignal();
 }
 
 
+*/
 
-void WF_tick(_Bool ZeroOrOne, uint8_t DATA, uint8_t CLOCK)
+void WF_tick(_Bool ZeroOrOne, uint8_t hourormin)
 {
     if(ZeroOrOne)
-        CONTROL_PORT |= 1<<DATA;
+        FACEPORT |= 1<<DATA;
     else
-        CONTROL_PORT &= ~(1<<DATA);
+        FACEPORT &= ~(1<<DATA);
 
-    CONTROL_PORT &= ~(1<<CLOCK);
-    CONTROL_PORT |= 1<<CLOCK;
+    FACEPORT &= ~(1<<hourormin);
+    FACEPORT |= 1<<hourormin;
 }
 
-   void WF_flashy(void)
-   {
-   uint8_t i;
-   uint8_t j;
-   uint8_t k;
 
-   for(i=80 ; i>0 ; i=i*100/110)
-   {
-   WF_tick(1, PA1, PA2);
-   WF_tick(1, PA2, PA3);
-   for( j=0 ; j<12 ; j++ )
-   {
-   for ( k=0 ; k<=i ; k++)
-   {
-   _delay_ms(1);
-   }
-   WF_tick(0, PA1, PA2);
-   WF_tick(0, PA2, PA3);
-   }
-   }
-   for(i=100 ; i > 0 ; i--)
-   {
-   for(k=1 ; k > 0 ; k--)
-   {
-   WF_tick(1, PA2, PA3);
-   WF_tick(1, PA1, PA2);
-   for( j=0 ; j<12 ; j++ )
-   {
-   _delay_ms(1);
-   WF_tick(0, PA2, PA3);
-   _delay_ms(1);
-   WF_tick(0, PA1, PA2);
-   }
-   }
-   _delay_ms(1);
-   }
-   for(i=2 ; i<120 ; i=(i*3)/2)
-   {
-   WF_tick(1, PA1, PA2);
-   WF_tick(1, PA2, PA3);
-   for( j=0 ; j<12 ; j++ )
-   {
-   for ( k=0 ; k<=i ; k++)
-   {
-   _delay_ms(1);
-   }
-   WF_tick(0, PA1, PA2);
-   WF_tick(0, PA2, PA3);
-   }
-   }
+void WF_flashy(void)
+{
+    uint8_t i;
+    uint8_t j;
+    uint8_t k;
 
-   WF_clear();
-   }
-   */
+    for(i=80 ; i>0 ; i=i*100/110)
+    {
+        WF_tick(1, HOUR_CLOCK);
+        WF_tick(1, MIN_CLOCK);
+        for( j=0 ; j<12 ; j++ )
+        {
+            for ( k=0 ; k<=i ; k++)
+            {
+                _delay_ms(1);
+            }
+            WF_tick(0, HOUR_CLOCK);
+            WF_tick(0, MIN_CLOCK);
+        }
+    }
+    for(i=100 ; i > 0 ; i--)
+    {
+        for(k=1 ; k > 0 ; k--)
+        {
+            WF_tick(1, HOUR_CLOCK);
+            WF_tick(1, MIN_CLOCK);
+            for( j=0 ; j<12 ; j++ )
+            {
+                _delay_ms(1);
+                WF_tick(0, HOUR_CLOCK);
+                _delay_ms(1);
+                WF_tick(0, MIN_CLOCK);
+            }
+        }
+        _delay_ms(1);
+    }
+    for(i=2 ; i<120 ; i=(i*3)/2)
+    {
+        WF_tick(1, HOUR_CLOCK);
+        WF_tick(1, MIN_CLOCK);
+        for( j=0 ; j<12 ; j++ )
+        {
+            for ( k=0 ; k<=i ; k++)
+            {
+                _delay_ms(1);
+            }
+            WF_tick(0, HOUR_CLOCK);
+            WF_tick(0, MIN_CLOCK);
+        }
+    }
+
+    WF_clear();
+}
+

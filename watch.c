@@ -79,11 +79,13 @@ ISR(PCINT1_vect)        // Interrupt Service Routine (called when PCINT0 changes
 
 int main(void)
 {
-
+    WF_init();
+    WF_enable();
 
     for(;;)
     {
         LEDflashAlert();
+        WF_flashy();
     }
 
 
