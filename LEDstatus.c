@@ -38,7 +38,6 @@ void LEDflashSignal()
     STATUSPORT &= ~(1<<STATUSLED); /* LED on */
     _delay_ms(500);
     STATUSPORT |= 1<<STATUSLED; /* LED off */
-    _delay_ms(500);
 }
 
 
