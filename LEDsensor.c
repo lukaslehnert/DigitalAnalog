@@ -42,11 +42,16 @@
 
 #include "LEDsensor.h"
 
+# define nop()  __asm__ __volatile__ ("nop" ::) 
+
 
 int LLS_read_LED ()
 {
     unsigned int j;
     unsigned int mask, notmask;
+    unsigned int i, delay;
+
+    delay = 160;
 
 
     mask = 1<<NEG;
@@ -70,7 +75,10 @@ int LLS_read_LED ()
         if ( (PINA & mask) == 0) 
             return j;
 
-        _delay_ms(2);
+        //_delay_ms(1);  // 1 Millisecond is much to long.  Lets cound clock cycles instead:
+        for (i=0; i<delay; i++)
+            nop();
+        
     }
 
     return 255;
