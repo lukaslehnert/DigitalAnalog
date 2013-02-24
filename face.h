@@ -7,6 +7,8 @@
 void WF_init(void);
 void WF_enable(void);
 void WF_disable(void);
+void WF_displayData(uint8_t);
+void WF_bargraph(uint8_t value);
 void WF_clear(void);
 void WF_allOn(void);
 void WF_freeRun(void);

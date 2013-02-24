@@ -1,20 +1,6 @@
 #include "face.h"
 
-#include "RTC.h"
-#include "LEDstatus.h"
-
-#define FACEPORT       PORTA
-#define FACEIOPORT     DDRA
-
-#define MIN_DATA        PA3
-#define HOUR_DATA       PA3
-#define DATA            PA3
-#define HOUR_CLOCK      PA2
-#define MIN_CLOCK       PA0
-
-#define CONTROLPORT     PORTB
-#define CONTROLIOPORT   DDRB
-#define CONTROLPIN      PB2
+#include "pindefs.h"
 
 void WF_init(void)
 {
@@ -32,7 +18,13 @@ void WF_enable()
 {
 
     CONTROLIOPORT |= 1<<CONTROLPIN;
-    CONTROLPORT |= CONTROLPIN;
+
+    // Fast PWM, PB2 only
+    TCCR0A = 0b10000011;
+    TCCR0B = 0b00000001;
+
+
+    //CONTROLPORT &= ~(1<<CONTROLPIN);
 
 }
 
@@ -40,9 +32,39 @@ void WF_enable()
 
 void WF_disable()
 {
+    // Disable PWM
+    TCCR0A = 0x00;
+
+    CONTROLPORT |= 1<<CONTROLPIN;
+}
 
 
+void WF_displayData(uint8_t byte)
+{
 
+    WF_disable();
+    unsigned char i;
+    for(i = 8 ; i>0 ; i--)
+    {
+        if((byte & 0x80))
+            WF_tick(1, HOUR_CLOCK);
+        else
+            WF_tick(0, HOUR_CLOCK);
+
+        byte <<= 1;
+    }
+    WF_enable();
+}
+
+
+void WF_bargraph(uint8_t value)
+{
+    WF_disable();
+    WF_clear();
+
+    for (value=value; value>0; value--)
+        WF_tick(1, MIN_CLOCK);
+    WF_enable();
 }
 
 
@@ -53,18 +75,17 @@ void WF_clear(void)
     FACEPORT &= ~(1<<MIN_DATA);
     FACEPORT &= ~(1<<HOUR_DATA);
 
+    WF_disable();
+
     for( i=0 ; i<16 ; i++)
     {
         FACEPORT |= 1<<MIN_CLOCK;       // Minute clock pin low
-        FACEPORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
-    }
-
-    for( i=0 ; i<16 ; i++)
-    {
         FACEPORT |= 1<<HOUR_CLOCK;      // Hour clock pin low
+        FACEPORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
         FACEPORT &= ~(1<<HOUR_CLOCK);   // Hour clock pin high
     }
 
+    WF_enable();
 }
 
 
@@ -95,7 +116,6 @@ void WF_allOn(void)
 
 void WF_displayTime(DateTime time)
 {
-    LEDon();
     //time.minute
     //time.hour
 
@@ -164,7 +184,6 @@ void WF_displayTime(DateTime time)
             hourticks = time.hour - 13;
             break;
         default:
-            LEDflashAlert();
             hourticks=11;
             break;
     }
@@ -172,14 +191,14 @@ void WF_displayTime(DateTime time)
 
     // Start by clearing the watch face:
     WF_clear();
+    WF_disable();
 
-    // We have to set the minutes first, then the hours.
     for(i=0; i<1+extralight; i++) // shift in the correct number of lights
     {
         FACEPORT |= 1<<MIN_DATA;        // Minute data pin high
         FACEPORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
         FACEPORT |= 1<<MIN_CLOCK;       // Minute clock pin low
-        FACEPORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
+        FACEPORT &= ~(1<<MIN_DATA);     // Minute data pin low. 
     }
 
     for( i = 0; i < minticks-wraparound ; i++) // Now that we've loaded a bit into the SR, shift it over to
@@ -197,7 +216,7 @@ void WF_displayTime(DateTime time)
             FACEPORT |= 1<<MIN_DATA;        // Minute data pin high
             FACEPORT &= ~(1<<MIN_CLOCK);    // Minute clock pin high
             FACEPORT |= 1<<MIN_CLOCK;       // Minute clock pin low
-            FACEPORT &= ~(1<<MIN_DATA);     // Minute data pin low.  Note that this also shifts the hours.
+            FACEPORT &= ~(1<<MIN_DATA);     // Minute data pin low.
         }
 
     // Now set the hours:
@@ -212,7 +231,7 @@ void WF_displayTime(DateTime time)
         FACEPORT |= 1<<HOUR_CLOCK;
     }
 
-    LEDoff();
+    WF_enable();
 }
 
 /*
