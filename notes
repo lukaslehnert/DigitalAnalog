@@ -1,0 +1,25 @@
+Microcontroller:
+(More than 24 PWM, so no need to use shift registers!)
+AT90PWM316
+http://www.digikey.com/product-detail/en/AT90PWM316-16SU/AT90PWM316-16SU-ND/1886172
+
+Real Time Clock:
+DS3231S
+http://www.digikey.com/product-detail/en/DS3231S%23/DS3231S%23-ND/1197574
+
+
+Targeting a ~3 volt system with only the LEDs powered by a higher voltage.  This lets us run the entirety of the system off the battery and only jumping up voltage for the display.
+
+
+Power converter:
+(Doesn't require an external diode, uses smaller inductor) 
+ISL9111AEH50Z-T7A1
+http://www.digikey.com/product-detail/en/ISL9111AEH50Z-T7A/ISL9111AEH50Z-T7ADKR-ND/2816340
+
+Paired Inductor:
+http://www.digikey.com/product-detail/en/ISL9111AEH50Z-T7A/ISL9111AEH50Z-T7ADKR-ND/2816340
+
+
+
+Solderable Conductive Ribbon:
+https://www.sparkfun.com/products/101721
